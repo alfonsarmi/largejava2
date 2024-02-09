@@ -20,7 +20,7 @@ import morphis.foundations.core.appsupportlib.runtime.action.ActionTrigger;
 import morphis.foundations.core.appsupportlib.runtime.control.IFormController;
 import morphis.foundations.core.appsupportlib.ui.KeyFunction;
 import morphis.foundations.core.types.NBool;
-
+import morphis.foundations.core.types.NNumber;
 import morphis.foundations.core.types.Types;
 
 public class EstadisticaController extends DefaultSurBlockController {
@@ -35,7 +35,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	}
 
 	public J040091Model getFormModel() {
-		return this.getTask().getModel();
+		return getTask().getModel();
 	}
 
 	//action methods generated from triggers
@@ -44,17 +44,17 @@ public class EstadisticaController extends DefaultSurBlockController {
 	LENGTH(:ESTADISTICA.EJERCICIO)<>4 THEN
 	Mostrar_mensaje('SUR-01379','E',TRUE); --Teclee ejercicio con 4 dígitos
 	END IF;
-	
+
 	:CG$CTRL.EJERCICIO:=:ESTADISTICA.EJERCICIO;
-	
-	
+
+
 	SET_BLOCK_PROPERTY('ESTADISTICA',QUERY_DATA_SOURCE_NAME,'(SELECT '''||:CG$CTRL.EJERCICIO||''' EJERCICIO FROM DUAL)');
-	
+
 	<multilinecomment>SET_BLOCK_PROPERTY('ESTADISTICA',QUERY_DATA_SOURCE_NAME,'(SELECT '''||:CG$CTRL.EJERCICIO||''' EJERCICIO , NOMPROVI PROVINCIA
 	                                                  FROM GLOBAL_NAME G, SU_PROVIN P
 	                                                  WHERE SUBSTR(G.GLOBAL_NAME,7,2)=P.CODPROVI)');
 	</multilinecomment>
-	
+
 	:CG$CTRL.VER_MAQUINA       := :ESTADISTICA.VER_MAQUINA;
 	:CG$CTRL.VER_BINGO         := :ESTADISTICA.VER_BINGO;
 	:CG$CTRL.VER_CASINO        := :ESTADISTICA.VER_CASINO;
@@ -62,8 +62,8 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:CG$CTRL.VER_LIQ_BINGO     := :ESTADISTICA.VER_LIQ_BINGO;
 	:CG$CTRL.VER_LIQ_CASINO    := :ESTADISTICA.VER_LIQ_CASINO;
 	:CG$CTRL.VER_OTROS         := :ESTADISTICA.VER_OTROS;
-	
-	
+
+
 	--SE ACEPTAN DIFERENCIAS DE 2 PESETAS/CENTIMOS A PARA ACEPTAR LOS DESCUADRES DE LA CONVERSION
 	IF KEURO.FMONEDA='P' THEN
 	IF :ESTADISTICA.EJERCICIO<='2001' THEN
@@ -73,7 +73,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	END IF;
 	:CONVERSION.VALOR_500:=500;
 	:CONVERSION.VALOR_1000:=1000;
-	
+
 	ELSIF KEURO.FMONEDA='E' THEN
 	IF :ESTADISTICA.EJERCICIO<='2001' THEN
 	:CONVERSION.VALOR_300:=1.8;
@@ -98,40 +98,40 @@ public class EstadisticaController extends DefaultSurBlockController {
 	@BeforeQuery
 	public void estadistica_BeforeQuery(QueryEvent args) {
 
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		if (estadisticaElement.getEjercicio().isNull() || Lib.length(estadisticaElement.getEjercicio()).notEquals(4)) {
-			this.getTask().getServices().mostrarMensaje(Types.toStr("SUR-01379"), Types.toStr("E"), Types.toBool(NBool.True));
+			getTask().getServices().mostrarMensaje(Types.toStr("SUR-01379"), Types.toStr("E"), Types.toBool(NBool.True));
 		}
-		this.getFormModel().getCgCtrl().setEjercicio(estadisticaElement.getEjercicio());
-		BlockServices.setBlockQueryDataSourceName("ESTADISTICA", Types.toStr("(SELECT '").append(this.getFormModel().getCgCtrl().getEjercicio()).append("' EJERCICIO FROM DUAL)"));
+		getFormModel().getCgCtrl().setEjercicio(estadisticaElement.getEjercicio());
+		BlockServices.setBlockQueryDataSourceName("ESTADISTICA", Types.toStr("(SELECT '").append(getFormModel().getCgCtrl().getEjercicio()).append("' EJERCICIO FROM DUAL)"));
 		// SET_BLOCK_PROPERTY('ESTADISTICA',QUERY_DATA_SOURCE_NAME,'(SELECT '''||:CG$CTRL.EJERCICIO||''' EJERCICIO , NOMPROVI PROVINCIA
 		// FROM GLOBAL_NAME G, SU_PROVIN P
 		// WHERE SUBSTR(G.GLOBAL_NAME,7,2)=P.CODPROVI)');
-		this.getFormModel().getCgCtrl().setVerMaquina(estadisticaElement.getVerMaquina());
-		this.getFormModel().getCgCtrl().setVerBingo(estadisticaElement.getVerBingo());
-		this.getFormModel().getCgCtrl().setVerCasino(estadisticaElement.getVerCasino());
-		this.getFormModel().getCgCtrl().setVerLiquidaciones(estadisticaElement.getVerLiquidaciones());
-		this.getFormModel().getCgCtrl().setVerLiqBingo(estadisticaElement.getVerLiqBingo());
-		this.getFormModel().getCgCtrl().setVerLiqCasino(estadisticaElement.getVerLiqCasino());
-		this.getFormModel().getCgCtrl().setVerOtros(estadisticaElement.getVerOtros());
+		getFormModel().getCgCtrl().setVerMaquina(estadisticaElement.getVerMaquina());
+		getFormModel().getCgCtrl().setVerBingo(estadisticaElement.getVerBingo());
+		getFormModel().getCgCtrl().setVerCasino(estadisticaElement.getVerCasino());
+		getFormModel().getCgCtrl().setVerLiquidaciones(estadisticaElement.getVerLiquidaciones());
+		getFormModel().getCgCtrl().setVerLiqBingo(estadisticaElement.getVerLiqBingo());
+		getFormModel().getCgCtrl().setVerLiqCasino(estadisticaElement.getVerLiqCasino());
+		getFormModel().getCgCtrl().setVerOtros(estadisticaElement.getVerOtros());
 		// SE ACEPTAN DIFERENCIAS DE 2 PESETAS/CENTIMOS A PARA ACEPTAR LOS DESCUADRES DE LA CONVERSION
 		if (Keuro.fmoneda().equals("P")) {
 			if (estadisticaElement.getEjercicio().lesserOrEquals("2001")) {
-				this.getFormModel().getConversion().setValor300(Types.toNumber(300));
+				getFormModel().getConversion().setValor300(Types.toNumber(300));
 			} else {
-				this.getFormModel().getConversion().setValor300(Types.toNumber(333));
+				getFormModel().getConversion().setValor300(Types.toNumber(333));
 			}
-			this.getFormModel().getConversion().setValor500(Types.toNumber(500));
-			this.getFormModel().getConversion().setValor1000(Types.toNumber(1000));
+			getFormModel().getConversion().setValor500(Types.toNumber(500));
+			getFormModel().getConversion().setValor1000(Types.toNumber(1000));
 		} else if (Keuro.fmoneda().equals("E")) {
 			if (estadisticaElement.getEjercicio().lesserOrEquals("2001")) {
-				this.getFormModel().getConversion().setValor300(Types.toNumber(1.8));
+				getFormModel().getConversion().setValor300(Types.toNumber(1.8));
 			} else {
-				this.getFormModel().getConversion().setValor300(Types.toNumber(2));
+				getFormModel().getConversion().setValor300(Types.toNumber(2));
 			}
-			this.getFormModel().getConversion().setValor500(Types.toNumber(3));
-			this.getFormModel().getConversion().setValor1000(Types.toNumber(6));
+			getFormModel().getConversion().setValor500(Types.toNumber(3));
+			getFormModel().getConversion().setValor1000(Types.toNumber(6));
 		}
 	}
 
@@ -143,17 +143,17 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.VER_LIQ_BINGO     := :CG$CTRL.VER_LIQ_BINGO;
 	:ESTADISTICA.VER_LIQ_CASINO    := :CG$CTRL.VER_LIQ_CASINO;
 	:ESTADISTICA.VER_OTROS         := :CG$CTRL.VER_OTROS;
-	
+
 	:ESTADISTICA.RB_LIQ_PERIODO     := 'T';
 	:ESTADISTICA.RB_LIQ_CAS_PERIODO := 'T';
 	:ESTADISTICA.RB_LIQ_BIN_PERIODO := 'T';
-	
+
 	:ESTADISTICA.CODPROVI := :CG$CTRL.CODPROVI;
 	:ESTADISTICA.NOMPROVI := :CG$CTRL.NOMPROVI;
-	
+
 	CALCULA_ESTADISTICA;
-	
-	
+
+
 	*/
 	/*
 	 *<p>
@@ -172,19 +172,19 @@ public class EstadisticaController extends DefaultSurBlockController {
 		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) args.getRow();
 
 		// F2J_WARNING : Post-query code is executed once for every row retrieved. If you expect the query to return many records, this may cause a performance problem.
-		estadisticaElement.setVerMaquina(this.getFormModel().getCgCtrl().getVerMaquina());
-		estadisticaElement.setVerBingo(this.getFormModel().getCgCtrl().getVerBingo());
-		estadisticaElement.setVerCasino(this.getFormModel().getCgCtrl().getVerCasino());
-		estadisticaElement.setVerLiquidaciones(this.getFormModel().getCgCtrl().getVerLiquidaciones());
-		estadisticaElement.setVerLiqBingo(this.getFormModel().getCgCtrl().getVerLiqBingo());
-		estadisticaElement.setVerLiqCasino(this.getFormModel().getCgCtrl().getVerLiqCasino());
-		estadisticaElement.setVerOtros(this.getFormModel().getCgCtrl().getVerOtros());
+		estadisticaElement.setVerMaquina(getFormModel().getCgCtrl().getVerMaquina());
+		estadisticaElement.setVerBingo(getFormModel().getCgCtrl().getVerBingo());
+		estadisticaElement.setVerCasino(getFormModel().getCgCtrl().getVerCasino());
+		estadisticaElement.setVerLiquidaciones(getFormModel().getCgCtrl().getVerLiquidaciones());
+		estadisticaElement.setVerLiqBingo(getFormModel().getCgCtrl().getVerLiqBingo());
+		estadisticaElement.setVerLiqCasino(getFormModel().getCgCtrl().getVerLiqCasino());
+		estadisticaElement.setVerOtros(getFormModel().getCgCtrl().getVerOtros());
 		estadisticaElement.setRbLiqPeriodo(Types.toStr("T"));
 		estadisticaElement.setRbLiqCasPeriodo(Types.toStr("T"));
 		estadisticaElement.setRbLiqBinPeriodo(Types.toStr("T"));
-		estadisticaElement.setCodprovi(this.getFormModel().getCgCtrl().getCodprovi());
-		estadisticaElement.setNomprovi(this.getFormModel().getCgCtrl().getNomprovi());
-		this.getTask().getServices().calculaEstadistica(estadisticaElement);
+		estadisticaElement.setCodprovi(getFormModel().getCgCtrl().getCodprovi());
+		estadisticaElement.setNomprovi(getFormModel().getCgCtrl().getNomprovi());
+		getTask().getServices().calculaEstadistica(estadisticaElement);
 	}
 
 	/* Original PL/SQL code code for TRIGGER CODPROVI.WHEN-NEW-ITEM-INSTANCE
@@ -227,19 +227,19 @@ public class EstadisticaController extends DefaultSurBlockController {
 
 	/* Original PL/SQL code code for TRIGGER BT_PROVINCIA.WHEN-BUTTON-PRESSED
 	 DECLARE
-	
+
 	vElegido BOOLEAN := FALSE;  --Se ha seleccionado un elemento
-	
+
 	BEGIN
-	
+
 	IF KUSUARI.FSERVERGE(USER)='__' THEN
 	--Sólo mostraremos la LOV si estamos en modo ENTER-QUERY
 	IF :SYSTEM.MODE = 'ENTER-QUERY' OR
 	:SYSTEM.RECORD_STATUS IN ('NEW','INSERT') THEN
-	
-	
+
+
 	vElegido := SHOW_LOV('LV_PROVINCIA');
-	
+
 	--Si no elegimos ninguna D.P., dejamos en blanco
 	--su código y su descripción
 	IF NOT vElegido THEN
@@ -248,28 +248,28 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.CODPROVI := NULL;
 	:ESTADISTICA.NOMPROVI := NULL;</multilinecomment>
 	NULL;
-	
+
 	ELSE
 	:CG$CTRL.CODPROVI:=:ESTADISTICA.CODPROVI;
 	:CG$CTRL.NOMPROVI:=:ESTADISTICA.NOMPROVI;
-	
+
 	END IF;
-	
-	
+
+
 	ELSE
-	
+
 	NULL;
-	
+
 	END IF;
 	ELSE
-	
+
 	MOSTRAR_MENSAJE('SUR-01334#1. Selección no activa para el usuario','I',FALSE);
 	END IF;
-	
+
 	END;
-	
+
 	<multilinecomment>**** Fin Creado por SUDEJGN0 el 17/04/2000 ****</multilinecomment>
-	
+
 	*/
 	/*
 	 *<p>
@@ -285,7 +285,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void btProvincia_buttonClick() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		{
 			NBool velegido = Types.toBool(NBool.False);
@@ -302,20 +302,20 @@ public class EstadisticaController extends DefaultSurBlockController {
 						// :ESTADISTICA.CODPROVI := NULL;
 						// :ESTADISTICA.NOMPROVI := NULL;
 					} else {
-						this.getFormModel().getCgCtrl().setCodprovi(estadisticaElement.getCodprovi());
-						this.getFormModel().getCgCtrl().setNomprovi(estadisticaElement.getNomprovi());
+						getFormModel().getCgCtrl().setCodprovi(estadisticaElement.getCodprovi());
+						getFormModel().getCgCtrl().setNomprovi(estadisticaElement.getNomprovi());
 					}
 				} else {
 				}
 			} else {
-				this.getTask().getServices().mostrarMensaje(Types.toStr("SUR-01334#1. Selección no activa para el usuario"), Types.toStr("I"), Types.toBool(NBool.False));
+				getTask().getServices().mostrarMensaje(Types.toStr("SUR-01334#1. Selección no activa para el usuario"), Types.toStr("I"), Types.toBool(NBool.False));
 			}
 		}
 	}
 
 	/* Original PL/SQL code code for TRIGGER VER_MAQUINA.WHEN-CHECKBOX-CHANGED
 	 COMPRUEBA_INDICADORES('MAQUINAS');
-	
+
 	IF :SYSTEM.MODE='NORMAL' THEN
 	IF :ESTADISTICA.VER_MAQUINA='S' THEN
 	--SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
@@ -328,7 +328,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	MOSTRAR_MENSAJE('SUR-02000 #1#2¿Desea borrar la estadística de máquinas?','D',FALSE);
 	IF NVL(:GLOBAL.QMS$DIALOG_ANSWER,'N')='Y' THEN
 	SET_TAB_PAGE_PROPERTY('MAQUINAS',VISIBLE,PROPERTY_FALSE);
-	
+
 	:DOCST1:=NULL;
 	:DOCST2:=NULL;
 	:DOCST3:=NULL;
@@ -352,21 +352,21 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.CENSO_FISCAL:=NULL;
 	:ESTADISTICA.CENSO_ADMINISTRATIVO:=NULL;
 	SET_ITEM_PROPERTY('ESTADISTICA.CENSO_ADMINISTRATIVO',PROMPT_TEXT,'Censo admin.');
-	
+
 	ELSE
 	:ESTADISTICA.VER_MAQUINA:='S';
 	END IF;
 	END IF;
-	
+
 	ELSE --OTRO MODO
-	
+
 	IF :ESTADISTICA.VER_MAQUINA='S' THEN
 	SET_TAB_PAGE_PROPERTY('MAQUINAS',VISIBLE,PROPERTY_TRUE);
 	ELSE
 	SET_TAB_PAGE_PROPERTY('MAQUINAS',VISIBLE,PROPERTY_FALSE);
 	END IF;
 	END IF;
-	
+
 	*/
 	/*
 	 *<p>
@@ -382,43 +382,43 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void verMaquina_checkBoxChange() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
-		this.getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("MAQUINAS"));
+		getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("MAQUINAS"));
 		if (TaskServices.getMode().equals("NORMAL")) {
 			if (estadisticaElement.getVerMaquina().equals("S")) {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
 				// MAQUINAS
 				ViewServices.setTabPageVisible("MAQUINAS", true);
-				this.getTask().getServices().calculaEstadisticaMaquinas(estadisticaElement);
+				getTask().getServices().calculaEstadisticaMaquinas(estadisticaElement);
 			} else {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE BORRA TODO LO DE MAQUINAS
 				// SE PIDE CONFIRMACION
-				this.getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de máquinas?"), Types.toStr("D"), Types.toBool(NBool.False));
+				getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de máquinas?"), Types.toStr("D"), Types.toBool(NBool.False));
 				if (Lib.isNull(Globals.getGlobal("QMS$DIALOG_ANSWER"), "N").equals("Y")) {
 					ViewServices.setTabPageVisible("MAQUINAS", false);
-					estadisticaElement.setDocst1(Types.toNumber(null));
-					estadisticaElement.setDocst2(Types.toNumber(null));
-					estadisticaElement.setDocst3(Types.toNumber(null));
-					estadisticaElement.setDocst4(Types.toNumber(null));
+					estadisticaElement.setDocst1(NNumber.getNull());
+					estadisticaElement.setDocst2(NNumber.getNull());
+					estadisticaElement.setDocst3(NNumber.getNull());
+					estadisticaElement.setDocst4(NNumber.getNull());
 					//       :DOCSTTOTAL:=NULL;
-					estadisticaElement.setTasa1(Types.toNumber(null));
-					estadisticaElement.setTasa2(Types.toNumber(null));
-					estadisticaElement.setTasa3(Types.toNumber(null));
-					estadisticaElement.setTasa4(Types.toNumber(null));
+					estadisticaElement.setTasa1(NNumber.getNull());
+					estadisticaElement.setTasa2(NNumber.getNull());
+					estadisticaElement.setTasa3(NNumber.getNull());
+					estadisticaElement.setTasa4(NNumber.getNull());
 					//       :TASATOTAL:=NULL;
-					estadisticaElement.setDocsr1(Types.toNumber(null));
-					estadisticaElement.setDocsr2(Types.toNumber(null));
-					estadisticaElement.setDocsr3(Types.toNumber(null));
-					estadisticaElement.setDocsr4(Types.toNumber(null));
+					estadisticaElement.setDocsr1(NNumber.getNull());
+					estadisticaElement.setDocsr2(NNumber.getNull());
+					estadisticaElement.setDocsr3(NNumber.getNull());
+					estadisticaElement.setDocsr4(NNumber.getNull());
 					//       :DOCSRTOTAL:=NULL;
-					estadisticaElement.setRecargo1(Types.toNumber(null));
-					estadisticaElement.setRecargo2(Types.toNumber(null));
-					estadisticaElement.setRecargo3(Types.toNumber(null));
-					estadisticaElement.setRecargo4(Types.toNumber(null));
+					estadisticaElement.setRecargo1(NNumber.getNull());
+					estadisticaElement.setRecargo2(NNumber.getNull());
+					estadisticaElement.setRecargo3(NNumber.getNull());
+					estadisticaElement.setRecargo4(NNumber.getNull());
 					//       :RECARGOTOTAL:=NULL;
-					estadisticaElement.setCensoFiscal(Types.toNumber(null));
-					estadisticaElement.setCensoAdministrativo(Types.toNumber(null));
+					estadisticaElement.setCensoFiscal(NNumber.getNull());
+					estadisticaElement.setCensoAdministrativo(NNumber.getNull());
 					ItemServices.setItemPromptText("ESTADISTICA.CENSO_ADMINISTRATIVO", "Censo admin.");
 				} else {
 					estadisticaElement.setVerMaquina(Types.toStr("S"));
@@ -436,7 +436,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 
 	/* Original PL/SQL code code for TRIGGER VER_LIQUIDACIONES.WHEN-CHECKBOX-CHANGED
 	 COMPRUEBA_INDICADORES('LIQUIDACIONES');
-	
+
 	IF :SYSTEM.MODE='NORMAL' THEN
 	IF :ESTADISTICA.VER_LIQUIDACIONES='S' THEN
 	--SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
@@ -449,7 +449,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	MOSTRAR_MENSAJE('SUR-02000 #1#2¿Desea borrar la estadística de liquidaciones de máquinas?','D',FALSE);
 	IF NVL(:GLOBAL.QMS$DIALOG_ANSWER,'N')='Y' THEN
 	SET_TAB_PAGE_PROPERTY('LIQUIDACIONES',VISIBLE,PROPERTY_FALSE);
-	
+
 	:ESTADISTICA.LIQUID_G1_DOCT1:=NULL;
 	:ESTADISTICA.LIQUID_G1_T1:=NULL;
 	:ESTADISTICA.LIQUID_G1_DOCR1:=NULL;
@@ -478,7 +478,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQUID_RESTO_T1:=NULL;
 	:ESTADISTICA.LIQUID_RESTO_DOCR1:=NULL;
 	:ESTADISTICA.LIQUID_RESTO_R1:=NULL;
-	
+
 	:ESTADISTICA.LIQUID_G1_DOCT2:=NULL;
 	:ESTADISTICA.LIQUID_G1_T2:=NULL;
 	:ESTADISTICA.LIQUID_G1_DOCR2:=NULL;
@@ -507,7 +507,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQUID_RESTO_T2:=NULL;
 	:ESTADISTICA.LIQUID_RESTO_DOCR2:=NULL;
 	:ESTADISTICA.LIQUID_RESTO_R2:=NULL;
-	
+
 	:ESTADISTICA.LIQUID_G1_DOCT3:=NULL;
 	:ESTADISTICA.LIQUID_G1_T3:=NULL;
 	:ESTADISTICA.LIQUID_G1_DOCR3:=NULL;
@@ -536,7 +536,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQUID_RESTO_T3:=NULL;
 	:ESTADISTICA.LIQUID_RESTO_DOCR3:=NULL;
 	:ESTADISTICA.LIQUID_RESTO_R3:=NULL;
-	
+
 	:ESTADISTICA.LIQUID_G1_DOCT4:=NULL;
 	:ESTADISTICA.LIQUID_G1_T4:=NULL;
 	:ESTADISTICA.LIQUID_G1_DOCR4:=NULL;
@@ -565,24 +565,24 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQUID_RESTO_T4:=NULL;
 	:ESTADISTICA.LIQUID_RESTO_DOCR4:=NULL;
 	:ESTADISTICA.LIQUID_RESTO_R4:=NULL;
-	
-	
-	
-	
+
+
+
+
 	ELSE
 	:ESTADISTICA.VER_LIQUIDACIONES:='S';
 	END IF;
 	END IF;
-	
+
 	ELSE --OTRO MODO
-	
+
 	IF :ESTADISTICA.VER_LIQUIDACIONES='S' THEN
 	SET_TAB_PAGE_PROPERTY('LIQUIDACIONES',VISIBLE,PROPERTY_TRUE);
 	ELSE
 	SET_TAB_PAGE_PROPERTY('LIQUIDACIONES',VISIBLE,PROPERTY_FALSE);
 	END IF;
 	END IF;
-	
+
 	*/
 	/*
 	 *<p>
@@ -598,133 +598,133 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void verLiquidaciones_checkBoxChange() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
-		this.getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("LIQUIDACIONES"));
+		getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("LIQUIDACIONES"));
 		if (TaskServices.getMode().equals("NORMAL")) {
 			if (estadisticaElement.getVerLiquidaciones().equals("S")) {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
 				// LIQUIDACIONES
 				ViewServices.setTabPageVisible("LIQUIDACIONES", true);
-				this.getTask().getServices().calculaEstadisticaLiquid(estadisticaElement);
+				getTask().getServices().calculaEstadisticaLiquid(estadisticaElement);
 			} else {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE BORRA TODO LO DE LIQUIDACIONES
 				// SE PIDE CONFIRMACION
-				this.getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de liquidaciones de máquinas?"), Types.toStr("D"), Types.toBool(NBool.False));
+				getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de liquidaciones de máquinas?"), Types.toStr("D"), Types.toBool(NBool.False));
 				if (Lib.isNull(Globals.getGlobal("QMS$DIALOG_ANSWER"), "N").equals("Y")) {
 					ViewServices.setTabPageVisible("LIQUIDACIONES", false);
-					estadisticaElement.setLiquidG1Doct1(Types.toNumber(null));
-					estadisticaElement.setLiquidG1T1(Types.toNumber(null));
-					estadisticaElement.setLiquidG1Docr1(Types.toNumber(null));
-					estadisticaElement.setLiquidG1R1(Types.toNumber(null));
-					estadisticaElement.setLiquidG2Doct1(Types.toNumber(null));
-					estadisticaElement.setLiquidG2T1(Types.toNumber(null));
-					estadisticaElement.setLiquidG2Docr1(Types.toNumber(null));
-					estadisticaElement.setLiquidG2R1(Types.toNumber(null));
-					estadisticaElement.setLiquidG3Doct1(Types.toNumber(null));
-					estadisticaElement.setLiquidG3T1(Types.toNumber(null));
-					estadisticaElement.setLiquidG3Docr1(Types.toNumber(null));
-					estadisticaElement.setLiquidG3R1(Types.toNumber(null));
-					estadisticaElement.setLiquidG4Doct1(Types.toNumber(null));
-					estadisticaElement.setLiquidG4T1(Types.toNumber(null));
-					estadisticaElement.setLiquidG4Docr1(Types.toNumber(null));
-					estadisticaElement.setLiquidG4R1(Types.toNumber(null));
-					estadisticaElement.setLiquidG5Doct1(Types.toNumber(null));
-					estadisticaElement.setLiquidG5T1(Types.toNumber(null));
-					estadisticaElement.setLiquidG5Docr1(Types.toNumber(null));
-					estadisticaElement.setLiquidG5R1(Types.toNumber(null));
-					estadisticaElement.setLiquidG6Doct1(Types.toNumber(null));
-					estadisticaElement.setLiquidG6T1(Types.toNumber(null));
-					estadisticaElement.setLiquidG6Docr1(Types.toNumber(null));
-					estadisticaElement.setLiquidG6R1(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoDoct1(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoT1(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoDocr1(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoR1(Types.toNumber(null));
-					estadisticaElement.setLiquidG1Doct2(Types.toNumber(null));
-					estadisticaElement.setLiquidG1T2(Types.toNumber(null));
-					estadisticaElement.setLiquidG1Docr2(Types.toNumber(null));
-					estadisticaElement.setLiquidG1R2(Types.toNumber(null));
-					estadisticaElement.setLiquidG2Doct2(Types.toNumber(null));
-					estadisticaElement.setLiquidG2T2(Types.toNumber(null));
-					estadisticaElement.setLiquidG2Docr2(Types.toNumber(null));
-					estadisticaElement.setLiquidG2R2(Types.toNumber(null));
-					estadisticaElement.setLiquidG3Doct2(Types.toNumber(null));
-					estadisticaElement.setLiquidG3T2(Types.toNumber(null));
-					estadisticaElement.setLiquidG3Docr2(Types.toNumber(null));
-					estadisticaElement.setLiquidG3R2(Types.toNumber(null));
-					estadisticaElement.setLiquidG4Doct2(Types.toNumber(null));
-					estadisticaElement.setLiquidG4T2(Types.toNumber(null));
-					estadisticaElement.setLiquidG4Docr2(Types.toNumber(null));
-					estadisticaElement.setLiquidG4R2(Types.toNumber(null));
-					estadisticaElement.setLiquidG5Doct2(Types.toNumber(null));
-					estadisticaElement.setLiquidG5T2(Types.toNumber(null));
-					estadisticaElement.setLiquidG5Docr2(Types.toNumber(null));
-					estadisticaElement.setLiquidG5R2(Types.toNumber(null));
-					estadisticaElement.setLiquidG6Doct2(Types.toNumber(null));
-					estadisticaElement.setLiquidG6T2(Types.toNumber(null));
-					estadisticaElement.setLiquidG6Docr2(Types.toNumber(null));
-					estadisticaElement.setLiquidG6R2(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoDoct2(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoT2(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoDocr2(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoR2(Types.toNumber(null));
-					estadisticaElement.setLiquidG1Doct3(Types.toNumber(null));
-					estadisticaElement.setLiquidG1T3(Types.toNumber(null));
-					estadisticaElement.setLiquidG1Docr3(Types.toNumber(null));
-					estadisticaElement.setLiquidG1R3(Types.toNumber(null));
-					estadisticaElement.setLiquidG2Doct3(Types.toNumber(null));
-					estadisticaElement.setLiquidG2T3(Types.toNumber(null));
-					estadisticaElement.setLiquidG2Docr3(Types.toNumber(null));
-					estadisticaElement.setLiquidG2R3(Types.toNumber(null));
-					estadisticaElement.setLiquidG3Doct3(Types.toNumber(null));
-					estadisticaElement.setLiquidG3T3(Types.toNumber(null));
-					estadisticaElement.setLiquidG3Docr3(Types.toNumber(null));
-					estadisticaElement.setLiquidG3R3(Types.toNumber(null));
-					estadisticaElement.setLiquidG4Doct3(Types.toNumber(null));
-					estadisticaElement.setLiquidG4T3(Types.toNumber(null));
-					estadisticaElement.setLiquidG4Docr3(Types.toNumber(null));
-					estadisticaElement.setLiquidG4R3(Types.toNumber(null));
-					estadisticaElement.setLiquidG5Doct3(Types.toNumber(null));
-					estadisticaElement.setLiquidG5T3(Types.toNumber(null));
-					estadisticaElement.setLiquidG5Docr3(Types.toNumber(null));
-					estadisticaElement.setLiquidG5R3(Types.toNumber(null));
-					estadisticaElement.setLiquidG6Doct3(Types.toNumber(null));
-					estadisticaElement.setLiquidG6T3(Types.toNumber(null));
-					estadisticaElement.setLiquidG6Docr3(Types.toNumber(null));
-					estadisticaElement.setLiquidG6R3(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoDoct3(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoT3(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoDocr3(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoR3(Types.toNumber(null));
-					estadisticaElement.setLiquidG1Doct4(Types.toNumber(null));
-					estadisticaElement.setLiquidG1T4(Types.toNumber(null));
-					estadisticaElement.setLiquidG1Docr4(Types.toNumber(null));
-					estadisticaElement.setLiquidG1R4(Types.toNumber(null));
-					estadisticaElement.setLiquidG2Doct4(Types.toNumber(null));
-					estadisticaElement.setLiquidG2T4(Types.toNumber(null));
-					estadisticaElement.setLiquidG2Docr4(Types.toNumber(null));
-					estadisticaElement.setLiquidG2R4(Types.toNumber(null));
-					estadisticaElement.setLiquidG3Doct4(Types.toNumber(null));
-					estadisticaElement.setLiquidG3T4(Types.toNumber(null));
-					estadisticaElement.setLiquidG3Docr4(Types.toNumber(null));
-					estadisticaElement.setLiquidG3R4(Types.toNumber(null));
-					estadisticaElement.setLiquidG4Doct4(Types.toNumber(null));
-					estadisticaElement.setLiquidG4T4(Types.toNumber(null));
-					estadisticaElement.setLiquidG4Docr4(Types.toNumber(null));
-					estadisticaElement.setLiquidG4R4(Types.toNumber(null));
-					estadisticaElement.setLiquidG5Doct4(Types.toNumber(null));
-					estadisticaElement.setLiquidG5T4(Types.toNumber(null));
-					estadisticaElement.setLiquidG5Docr4(Types.toNumber(null));
-					estadisticaElement.setLiquidG5R4(Types.toNumber(null));
-					estadisticaElement.setLiquidG6Doct4(Types.toNumber(null));
-					estadisticaElement.setLiquidG6T4(Types.toNumber(null));
-					estadisticaElement.setLiquidG6Docr4(Types.toNumber(null));
-					estadisticaElement.setLiquidG6R4(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoDoct4(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoT4(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoDocr4(Types.toNumber(null));
-					estadisticaElement.setLiquidRestoR4(Types.toNumber(null));
+					estadisticaElement.setLiquidG1Doct1(NNumber.getNull());
+					estadisticaElement.setLiquidG1T1(NNumber.getNull());
+					estadisticaElement.setLiquidG1Docr1(NNumber.getNull());
+					estadisticaElement.setLiquidG1R1(NNumber.getNull());
+					estadisticaElement.setLiquidG2Doct1(NNumber.getNull());
+					estadisticaElement.setLiquidG2T1(NNumber.getNull());
+					estadisticaElement.setLiquidG2Docr1(NNumber.getNull());
+					estadisticaElement.setLiquidG2R1(NNumber.getNull());
+					estadisticaElement.setLiquidG3Doct1(NNumber.getNull());
+					estadisticaElement.setLiquidG3T1(NNumber.getNull());
+					estadisticaElement.setLiquidG3Docr1(NNumber.getNull());
+					estadisticaElement.setLiquidG3R1(NNumber.getNull());
+					estadisticaElement.setLiquidG4Doct1(NNumber.getNull());
+					estadisticaElement.setLiquidG4T1(NNumber.getNull());
+					estadisticaElement.setLiquidG4Docr1(NNumber.getNull());
+					estadisticaElement.setLiquidG4R1(NNumber.getNull());
+					estadisticaElement.setLiquidG5Doct1(NNumber.getNull());
+					estadisticaElement.setLiquidG5T1(NNumber.getNull());
+					estadisticaElement.setLiquidG5Docr1(NNumber.getNull());
+					estadisticaElement.setLiquidG5R1(NNumber.getNull());
+					estadisticaElement.setLiquidG6Doct1(NNumber.getNull());
+					estadisticaElement.setLiquidG6T1(NNumber.getNull());
+					estadisticaElement.setLiquidG6Docr1(NNumber.getNull());
+					estadisticaElement.setLiquidG6R1(NNumber.getNull());
+					estadisticaElement.setLiquidRestoDoct1(NNumber.getNull());
+					estadisticaElement.setLiquidRestoT1(NNumber.getNull());
+					estadisticaElement.setLiquidRestoDocr1(NNumber.getNull());
+					estadisticaElement.setLiquidRestoR1(NNumber.getNull());
+					estadisticaElement.setLiquidG1Doct2(NNumber.getNull());
+					estadisticaElement.setLiquidG1T2(NNumber.getNull());
+					estadisticaElement.setLiquidG1Docr2(NNumber.getNull());
+					estadisticaElement.setLiquidG1R2(NNumber.getNull());
+					estadisticaElement.setLiquidG2Doct2(NNumber.getNull());
+					estadisticaElement.setLiquidG2T2(NNumber.getNull());
+					estadisticaElement.setLiquidG2Docr2(NNumber.getNull());
+					estadisticaElement.setLiquidG2R2(NNumber.getNull());
+					estadisticaElement.setLiquidG3Doct2(NNumber.getNull());
+					estadisticaElement.setLiquidG3T2(NNumber.getNull());
+					estadisticaElement.setLiquidG3Docr2(NNumber.getNull());
+					estadisticaElement.setLiquidG3R2(NNumber.getNull());
+					estadisticaElement.setLiquidG4Doct2(NNumber.getNull());
+					estadisticaElement.setLiquidG4T2(NNumber.getNull());
+					estadisticaElement.setLiquidG4Docr2(NNumber.getNull());
+					estadisticaElement.setLiquidG4R2(NNumber.getNull());
+					estadisticaElement.setLiquidG5Doct2(NNumber.getNull());
+					estadisticaElement.setLiquidG5T2(NNumber.getNull());
+					estadisticaElement.setLiquidG5Docr2(NNumber.getNull());
+					estadisticaElement.setLiquidG5R2(NNumber.getNull());
+					estadisticaElement.setLiquidG6Doct2(NNumber.getNull());
+					estadisticaElement.setLiquidG6T2(NNumber.getNull());
+					estadisticaElement.setLiquidG6Docr2(NNumber.getNull());
+					estadisticaElement.setLiquidG6R2(NNumber.getNull());
+					estadisticaElement.setLiquidRestoDoct2(NNumber.getNull());
+					estadisticaElement.setLiquidRestoT2(NNumber.getNull());
+					estadisticaElement.setLiquidRestoDocr2(NNumber.getNull());
+					estadisticaElement.setLiquidRestoR2(NNumber.getNull());
+					estadisticaElement.setLiquidG1Doct3(NNumber.getNull());
+					estadisticaElement.setLiquidG1T3(NNumber.getNull());
+					estadisticaElement.setLiquidG1Docr3(NNumber.getNull());
+					estadisticaElement.setLiquidG1R3(NNumber.getNull());
+					estadisticaElement.setLiquidG2Doct3(NNumber.getNull());
+					estadisticaElement.setLiquidG2T3(NNumber.getNull());
+					estadisticaElement.setLiquidG2Docr3(NNumber.getNull());
+					estadisticaElement.setLiquidG2R3(NNumber.getNull());
+					estadisticaElement.setLiquidG3Doct3(NNumber.getNull());
+					estadisticaElement.setLiquidG3T3(NNumber.getNull());
+					estadisticaElement.setLiquidG3Docr3(NNumber.getNull());
+					estadisticaElement.setLiquidG3R3(NNumber.getNull());
+					estadisticaElement.setLiquidG4Doct3(NNumber.getNull());
+					estadisticaElement.setLiquidG4T3(NNumber.getNull());
+					estadisticaElement.setLiquidG4Docr3(NNumber.getNull());
+					estadisticaElement.setLiquidG4R3(NNumber.getNull());
+					estadisticaElement.setLiquidG5Doct3(NNumber.getNull());
+					estadisticaElement.setLiquidG5T3(NNumber.getNull());
+					estadisticaElement.setLiquidG5Docr3(NNumber.getNull());
+					estadisticaElement.setLiquidG5R3(NNumber.getNull());
+					estadisticaElement.setLiquidG6Doct3(NNumber.getNull());
+					estadisticaElement.setLiquidG6T3(NNumber.getNull());
+					estadisticaElement.setLiquidG6Docr3(NNumber.getNull());
+					estadisticaElement.setLiquidG6R3(NNumber.getNull());
+					estadisticaElement.setLiquidRestoDoct3(NNumber.getNull());
+					estadisticaElement.setLiquidRestoT3(NNumber.getNull());
+					estadisticaElement.setLiquidRestoDocr3(NNumber.getNull());
+					estadisticaElement.setLiquidRestoR3(NNumber.getNull());
+					estadisticaElement.setLiquidG1Doct4(NNumber.getNull());
+					estadisticaElement.setLiquidG1T4(NNumber.getNull());
+					estadisticaElement.setLiquidG1Docr4(NNumber.getNull());
+					estadisticaElement.setLiquidG1R4(NNumber.getNull());
+					estadisticaElement.setLiquidG2Doct4(NNumber.getNull());
+					estadisticaElement.setLiquidG2T4(NNumber.getNull());
+					estadisticaElement.setLiquidG2Docr4(NNumber.getNull());
+					estadisticaElement.setLiquidG2R4(NNumber.getNull());
+					estadisticaElement.setLiquidG3Doct4(NNumber.getNull());
+					estadisticaElement.setLiquidG3T4(NNumber.getNull());
+					estadisticaElement.setLiquidG3Docr4(NNumber.getNull());
+					estadisticaElement.setLiquidG3R4(NNumber.getNull());
+					estadisticaElement.setLiquidG4Doct4(NNumber.getNull());
+					estadisticaElement.setLiquidG4T4(NNumber.getNull());
+					estadisticaElement.setLiquidG4Docr4(NNumber.getNull());
+					estadisticaElement.setLiquidG4R4(NNumber.getNull());
+					estadisticaElement.setLiquidG5Doct4(NNumber.getNull());
+					estadisticaElement.setLiquidG5T4(NNumber.getNull());
+					estadisticaElement.setLiquidG5Docr4(NNumber.getNull());
+					estadisticaElement.setLiquidG5R4(NNumber.getNull());
+					estadisticaElement.setLiquidG6Doct4(NNumber.getNull());
+					estadisticaElement.setLiquidG6T4(NNumber.getNull());
+					estadisticaElement.setLiquidG6Docr4(NNumber.getNull());
+					estadisticaElement.setLiquidG6R4(NNumber.getNull());
+					estadisticaElement.setLiquidRestoDoct4(NNumber.getNull());
+					estadisticaElement.setLiquidRestoT4(NNumber.getNull());
+					estadisticaElement.setLiquidRestoDocr4(NNumber.getNull());
+					estadisticaElement.setLiquidRestoR4(NNumber.getNull());
 				} else {
 					estadisticaElement.setVerLiquidaciones(Types.toStr("S"));
 				}
@@ -741,7 +741,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 
 	/* Original PL/SQL code code for TRIGGER VER_BINGO.WHEN-CHECKBOX-CHANGED
 	 COMPRUEBA_INDICADORES('BINGOS');
-	
+
 	IF :SYSTEM.MODE='NORMAL' THEN
 	IF :ESTADISTICA.VER_BINGO='S' THEN
 	--SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
@@ -752,95 +752,95 @@ public class EstadisticaController extends DefaultSurBlockController {
 	--SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE BORRA TODO LO DE BINGOS
 	--SE PIDE CONFIRMACION
 	MOSTRAR_MENSAJE('SUR-02000 #1#2¿Desea borrar la estadística de bingos?','D',FALSE);
-	
+
 	IF NVL(:GLOBAL.QMS$DIALOG_ANSWER,'N')='Y' THEN
 	    SET_TAB_PAGE_PROPERTY('BINGOS',VISIBLE,PROPERTY_FALSE);
-	
+
 	    :BINGO_DOCT1_1T := NULL;
 	    :BINGO_DOCT2_1T := NULL;
 	    :BINGO_DOCT3_1T := NULL;
 	    :BINGO_DOCT4_1T := NULL;
-	
+
 	    :BINGO_B1_1T := NULL;
 	    :BINGO_B2_1T := NULL;
 	    :BINGO_B3_1T := NULL;
 	    :BINGO_B4_1T := NULL;
-	
+
 	    :BINGO_T1_1T := NULL;
 	    :BINGO_T2_1T := NULL;
 	    :BINGO_T3_1T := NULL;
 	    :BINGO_T4_1T := NULL;
-	
+
 	    :BINGO_R1_1T := NULL;
 	    :BINGO_R2_1T := NULL;
 	    :BINGO_R3_1T := NULL;
 	    :BINGO_R4_1T := NULL;
-	
+
 	    :BINGO_DOCT1_2T:=NULL;
 	    :BINGO_DOCT2_2T:=NULL;
 	    :BINGO_DOCT3_2T:=NULL;
 	    :BINGO_DOCT4_2T:=NULL;
-	
+
 	    :BINGO_B1_2T := NULL;
 	    :BINGO_B2_2T := NULL;
 	    :BINGO_B3_2T := NULL;
 	    :BINGO_B4_2T := NULL;
-	
+
 	    :BINGO_T1_2T := NULL;
 	    :BINGO_T2_2T := NULL;
 	    :BINGO_T3_2T := NULL;
 	    :BINGO_T4_2T := NULL;
-	
+
 	    :BINGO_R1_2T := NULL;
 	    :BINGO_R2_2T := NULL;
 	    :BINGO_R3_2T := NULL;
 	    :BINGO_R4_2T := NULL;
-	
+
 	    :BINGO_DOCT1_3T := NULL;
 	    :BINGO_DOCT2_3T := NULL;
 	    :BINGO_DOCT3_3T := NULL;
 	    :BINGO_DOCT4_3T := NULL;
-	
+
 	    :BINGO_B1_3T := NULL;
 	    :BINGO_B2_3T := NULL;
 	    :BINGO_B3_3T := NULL;
 	    :BINGO_B4_3T := NULL;
-	
+
 	    :BINGO_T1_3T := NULL;
 	    :BINGO_T2_3T := NULL;
 	    :BINGO_T3_3T := NULL;
 	    :BINGO_T4_3T := NULL;
-	
+
 	    :BINGO_R1_3T := NULL;
 	    :BINGO_R2_3T := NULL;
 	    :BINGO_R3_3T := NULL;
 	    :BINGO_R4_3T := NULL;
-	
+
 	    :BINGO_DOCT1_4T := NULL;
 	    :BINGO_DOCT2_4T := NULL;
 	    :BINGO_DOCT3_4T := NULL;
 	    :BINGO_DOCT4_4T := NULL;
-	
+
 	    :BINGO_B1_4T := NULL;
 	    :BINGO_B2_4T := NULL;
 	    :BINGO_B3_4T := NULL;
 	    :BINGO_B4_4T := NULL;
-	
+
 	    :BINGO_T1_4T := NULL;
 	    :BINGO_T2_4T := NULL;
 	    :BINGO_T3_4T := NULL;
 	    :BINGO_T4_4T := NULL;
-	
+
 	    :BINGO_R1_4T := NULL;
 	    :BINGO_R2_4T := NULL;
 	    :BINGO_R3_4T := NULL;
 	    :BINGO_R4_4T := NULL;
-	
+
 	ELSE
 	    :ESTADISTICA.VER_BINGO:='S';
 	END IF;
 	END IF;
-	
+
 	ELSE
 	IF :ESTADISTICA.VER_BINGO='S' THEN
 	SET_TAB_PAGE_PROPERTY('BINGOS',VISIBLE,PROPERTY_TRUE);
@@ -863,85 +863,85 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void verBingo_checkBoxChange() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
-		this.getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("BINGOS"));
+		getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("BINGOS"));
 		if (TaskServices.getMode().equals("NORMAL")) {
 			if (estadisticaElement.getVerBingo().equals("S")) {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
 				// BINGOS
 				ViewServices.setTabPageVisible("BINGOS", true);
-				this.getTask().getServices().calculaEstadisticaBingo(estadisticaElement);
+				getTask().getServices().calculaEstadisticaBingo(estadisticaElement);
 			} else {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE BORRA TODO LO DE BINGOS
 				// SE PIDE CONFIRMACION
-				this.getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de bingos?"), Types.toStr("D"), Types.toBool(NBool.False));
+				getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de bingos?"), Types.toStr("D"), Types.toBool(NBool.False));
 				if (Lib.isNull(Globals.getGlobal("QMS$DIALOG_ANSWER"), "N").equals("Y")) {
 					ViewServices.setTabPageVisible("BINGOS", false);
-					estadisticaElement.setBingoDoct11t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct21t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct31t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct41t(Types.toNumber(null));
-					estadisticaElement.setBingoB11t(Types.toNumber(null));
-					estadisticaElement.setBingoB21t(Types.toNumber(null));
-					estadisticaElement.setBingoB31t(Types.toNumber(null));
-					estadisticaElement.setBingoB41t(Types.toNumber(null));
-					estadisticaElement.setBingoT11t(Types.toNumber(null));
-					estadisticaElement.setBingoT21t(Types.toNumber(null));
-					estadisticaElement.setBingoT31t(Types.toNumber(null));
-					estadisticaElement.setBingoT41t(Types.toNumber(null));
-					estadisticaElement.setBingoR11t(Types.toNumber(null));
-					estadisticaElement.setBingoR21t(Types.toNumber(null));
-					estadisticaElement.setBingoR31t(Types.toNumber(null));
-					estadisticaElement.setBingoR41t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct12t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct22t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct32t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct42t(Types.toNumber(null));
-					estadisticaElement.setBingoB12t(Types.toNumber(null));
-					estadisticaElement.setBingoB22t(Types.toNumber(null));
-					estadisticaElement.setBingoB32t(Types.toNumber(null));
-					estadisticaElement.setBingoB42t(Types.toNumber(null));
-					estadisticaElement.setBingoT12t(Types.toNumber(null));
-					estadisticaElement.setBingoT22t(Types.toNumber(null));
-					estadisticaElement.setBingoT32t(Types.toNumber(null));
-					estadisticaElement.setBingoT42t(Types.toNumber(null));
-					estadisticaElement.setBingoR12t(Types.toNumber(null));
-					estadisticaElement.setBingoR22t(Types.toNumber(null));
-					estadisticaElement.setBingoR32t(Types.toNumber(null));
-					estadisticaElement.setBingoR42t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct13t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct23t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct33t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct43t(Types.toNumber(null));
-					estadisticaElement.setBingoB13t(Types.toNumber(null));
-					estadisticaElement.setBingoB23t(Types.toNumber(null));
-					estadisticaElement.setBingoB33t(Types.toNumber(null));
-					estadisticaElement.setBingoB43t(Types.toNumber(null));
-					estadisticaElement.setBingoT13t(Types.toNumber(null));
-					estadisticaElement.setBingoT23t(Types.toNumber(null));
-					estadisticaElement.setBingoT33t(Types.toNumber(null));
-					estadisticaElement.setBingoT43t(Types.toNumber(null));
-					estadisticaElement.setBingoR13t(Types.toNumber(null));
-					estadisticaElement.setBingoR23t(Types.toNumber(null));
-					estadisticaElement.setBingoR33t(Types.toNumber(null));
-					estadisticaElement.setBingoR43t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct14t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct24t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct34t(Types.toNumber(null));
-					estadisticaElement.setBingoDoct44t(Types.toNumber(null));
-					estadisticaElement.setBingoB14t(Types.toNumber(null));
-					estadisticaElement.setBingoB24t(Types.toNumber(null));
-					estadisticaElement.setBingoB34t(Types.toNumber(null));
-					estadisticaElement.setBingoB44t(Types.toNumber(null));
-					estadisticaElement.setBingoT14t(Types.toNumber(null));
-					estadisticaElement.setBingoT24t(Types.toNumber(null));
-					estadisticaElement.setBingoT34t(Types.toNumber(null));
-					estadisticaElement.setBingoT44t(Types.toNumber(null));
-					estadisticaElement.setBingoR14t(Types.toNumber(null));
-					estadisticaElement.setBingoR24t(Types.toNumber(null));
-					estadisticaElement.setBingoR34t(Types.toNumber(null));
-					estadisticaElement.setBingoR44t(Types.toNumber(null));
+					estadisticaElement.setBingoDoct11t(NNumber.getNull());
+					estadisticaElement.setBingoDoct21t(NNumber.getNull());
+					estadisticaElement.setBingoDoct31t(NNumber.getNull());
+					estadisticaElement.setBingoDoct41t(NNumber.getNull());
+					estadisticaElement.setBingoB11t(NNumber.getNull());
+					estadisticaElement.setBingoB21t(NNumber.getNull());
+					estadisticaElement.setBingoB31t(NNumber.getNull());
+					estadisticaElement.setBingoB41t(NNumber.getNull());
+					estadisticaElement.setBingoT11t(NNumber.getNull());
+					estadisticaElement.setBingoT21t(NNumber.getNull());
+					estadisticaElement.setBingoT31t(NNumber.getNull());
+					estadisticaElement.setBingoT41t(NNumber.getNull());
+					estadisticaElement.setBingoR11t(NNumber.getNull());
+					estadisticaElement.setBingoR21t(NNumber.getNull());
+					estadisticaElement.setBingoR31t(NNumber.getNull());
+					estadisticaElement.setBingoR41t(NNumber.getNull());
+					estadisticaElement.setBingoDoct12t(NNumber.getNull());
+					estadisticaElement.setBingoDoct22t(NNumber.getNull());
+					estadisticaElement.setBingoDoct32t(NNumber.getNull());
+					estadisticaElement.setBingoDoct42t(NNumber.getNull());
+					estadisticaElement.setBingoB12t(NNumber.getNull());
+					estadisticaElement.setBingoB22t(NNumber.getNull());
+					estadisticaElement.setBingoB32t(NNumber.getNull());
+					estadisticaElement.setBingoB42t(NNumber.getNull());
+					estadisticaElement.setBingoT12t(NNumber.getNull());
+					estadisticaElement.setBingoT22t(NNumber.getNull());
+					estadisticaElement.setBingoT32t(NNumber.getNull());
+					estadisticaElement.setBingoT42t(NNumber.getNull());
+					estadisticaElement.setBingoR12t(NNumber.getNull());
+					estadisticaElement.setBingoR22t(NNumber.getNull());
+					estadisticaElement.setBingoR32t(NNumber.getNull());
+					estadisticaElement.setBingoR42t(NNumber.getNull());
+					estadisticaElement.setBingoDoct13t(NNumber.getNull());
+					estadisticaElement.setBingoDoct23t(NNumber.getNull());
+					estadisticaElement.setBingoDoct33t(NNumber.getNull());
+					estadisticaElement.setBingoDoct43t(NNumber.getNull());
+					estadisticaElement.setBingoB13t(NNumber.getNull());
+					estadisticaElement.setBingoB23t(NNumber.getNull());
+					estadisticaElement.setBingoB33t(NNumber.getNull());
+					estadisticaElement.setBingoB43t(NNumber.getNull());
+					estadisticaElement.setBingoT13t(NNumber.getNull());
+					estadisticaElement.setBingoT23t(NNumber.getNull());
+					estadisticaElement.setBingoT33t(NNumber.getNull());
+					estadisticaElement.setBingoT43t(NNumber.getNull());
+					estadisticaElement.setBingoR13t(NNumber.getNull());
+					estadisticaElement.setBingoR23t(NNumber.getNull());
+					estadisticaElement.setBingoR33t(NNumber.getNull());
+					estadisticaElement.setBingoR43t(NNumber.getNull());
+					estadisticaElement.setBingoDoct14t(NNumber.getNull());
+					estadisticaElement.setBingoDoct24t(NNumber.getNull());
+					estadisticaElement.setBingoDoct34t(NNumber.getNull());
+					estadisticaElement.setBingoDoct44t(NNumber.getNull());
+					estadisticaElement.setBingoB14t(NNumber.getNull());
+					estadisticaElement.setBingoB24t(NNumber.getNull());
+					estadisticaElement.setBingoB34t(NNumber.getNull());
+					estadisticaElement.setBingoB44t(NNumber.getNull());
+					estadisticaElement.setBingoT14t(NNumber.getNull());
+					estadisticaElement.setBingoT24t(NNumber.getNull());
+					estadisticaElement.setBingoT34t(NNumber.getNull());
+					estadisticaElement.setBingoT44t(NNumber.getNull());
+					estadisticaElement.setBingoR14t(NNumber.getNull());
+					estadisticaElement.setBingoR24t(NNumber.getNull());
+					estadisticaElement.setBingoR34t(NNumber.getNull());
+					estadisticaElement.setBingoR44t(NNumber.getNull());
 				} else {
 					estadisticaElement.setVerBingo(Types.toStr("S"));
 				}
@@ -957,7 +957,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 
 	/* Original PL/SQL code code for TRIGGER VER_LIQ_BINGO.WHEN-CHECKBOX-CHANGED
 	 COMPRUEBA_INDICADORES('LIQ_BINGOS');
-	
+
 	IF :SYSTEM.MODE='NORMAL' THEN
 	IF :ESTADISTICA.VER_LIQ_BINGO='S' THEN
 	--SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
@@ -970,8 +970,8 @@ public class EstadisticaController extends DefaultSurBlockController {
 	MOSTRAR_MENSAJE('SUR-02000 #1#2¿Desea borrar la estadística de liquidaciones de bingos?','D',FALSE);
 	IF NVL(:GLOBAL.QMS$DIALOG_ANSWER,'N')='Y' THEN
 	SET_TAB_PAGE_PROPERTY('LIQ_BINGOS',VISIBLE,PROPERTY_FALSE);
-	
-	
+
+
 	:ESTADISTICA.LIQ_BIN_G1_DOCT_TOTAL:=NULL;
 	:ESTADISTICA.LIQ_BIN_G2_DOCT_TOTAL:=NULL;
 	:ESTADISTICA.LIQ_BIN_G3_DOCT_TOTAL:=NULL;
@@ -986,7 +986,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQ_BIN_G5_T_TOTAL:=NULL;
 	:ESTADISTICA.LIQ_BIN_G6_T_TOTAL:=NULL;
 	:ESTADISTICA.LIQ_BIN_RESTO_T_TOTAL:=NULL;
-	
+
 	:ESTADISTICA.LIQ_BIN_G1_DOCR1:=NULL;
 	:ESTADISTICA.LIQ_BIN_G1_DOCR2:=NULL;
 	:ESTADISTICA.LIQ_BIN_G1_DOCR3:=NULL;
@@ -1015,7 +1015,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQ_BIN_RESTO_DOCR2:=NULL;
 	:ESTADISTICA.LIQ_BIN_RESTO_DOCR3:=NULL;
 	:ESTADISTICA.LIQ_BIN_RESTO_DOCR4:=NULL;
-	
+
 	:ESTADISTICA.LIQ_BIN_G1_R1:=NULL;
 	:ESTADISTICA.LIQ_BIN_G1_R2:=NULL;
 	:ESTADISTICA.LIQ_BIN_G1_R3:=NULL;
@@ -1044,22 +1044,22 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQ_BIN_RESTO_R2:=NULL;
 	:ESTADISTICA.LIQ_BIN_RESTO_R3:=NULL;
 	:ESTADISTICA.LIQ_BIN_RESTO_R4:=NULL;
-	
-	
+
+
 	ELSE
 	:ESTADISTICA.VER_LIQ_BINGO:='S';
 	END IF;
 	END IF;
-	
+
 	ELSE --OTRO MODO
-	
+
 	IF :ESTADISTICA.VER_LIQ_BINGO='S' THEN
 	SET_TAB_PAGE_PROPERTY('LIQ_BINGOS',VISIBLE,PROPERTY_TRUE);
 	ELSE
 	SET_TAB_PAGE_PROPERTY('LIQ_BINGOS',VISIBLE,PROPERTY_FALSE);
 	END IF;
 	END IF;
-	
+
 	*/
 	/*
 	 *<p>
@@ -1075,91 +1075,91 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void verLiqBingo_checkBoxChange() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
-		this.getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("LIQ_BINGOS"));
+		getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("LIQ_BINGOS"));
 		if (TaskServices.getMode().equals("NORMAL")) {
 			if (estadisticaElement.getVerLiqBingo().equals("S")) {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
 				// LIQUIDACIONES DE BINGOS
 				ViewServices.setTabPageVisible("LIQ_BINGOS", true);
-				this.getTask().getServices().calculaEstadisticaLiqBingo(estadisticaElement);
+				getTask().getServices().calculaEstadisticaLiqBingo(estadisticaElement);
 			} else {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE BORRA TODO LO DE LIQUIDACIONES
 				// SE PIDE CONFIRMACION
-				this.getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de liquidaciones de bingos?"), Types.toStr("D"), Types.toBool(NBool.False));
+				getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de liquidaciones de bingos?"), Types.toStr("D"), Types.toBool(NBool.False));
 				if (Lib.isNull(Globals.getGlobal("QMS$DIALOG_ANSWER"), "N").equals("Y")) {
 					ViewServices.setTabPageVisible("LIQ_BINGOS", false);
-					estadisticaElement.setLiqBinG1DoctTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinG2DoctTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinG3DoctTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinG4DoctTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinG5DoctTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinG6DoctTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinRestoDoctTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinG1TTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinG2TTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinG3TTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinG4TTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinG5TTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinG6TTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinRestoTTotal(Types.toNumber(null));
-					estadisticaElement.setLiqBinG1Docr1(Types.toNumber(null));
-					estadisticaElement.setLiqBinG1Docr2(Types.toNumber(null));
-					estadisticaElement.setLiqBinG1Docr3(Types.toNumber(null));
-					estadisticaElement.setLiqBinG1Docr4(Types.toNumber(null));
-					estadisticaElement.setLiqBinG2Docr1(Types.toNumber(null));
-					estadisticaElement.setLiqBinG2Docr2(Types.toNumber(null));
-					estadisticaElement.setLiqBinG2Docr3(Types.toNumber(null));
-					estadisticaElement.setLiqBinG2Docr4(Types.toNumber(null));
-					estadisticaElement.setLiqBinG3Docr1(Types.toNumber(null));
-					estadisticaElement.setLiqBinG3Docr2(Types.toNumber(null));
-					estadisticaElement.setLiqBinG3Docr3(Types.toNumber(null));
-					estadisticaElement.setLiqBinG3Docr4(Types.toNumber(null));
-					estadisticaElement.setLiqBinG4Docr1(Types.toNumber(null));
-					estadisticaElement.setLiqBinG4Docr2(Types.toNumber(null));
-					estadisticaElement.setLiqBinG4Docr3(Types.toNumber(null));
-					estadisticaElement.setLiqBinG4Docr4(Types.toNumber(null));
-					estadisticaElement.setLiqBinG5Docr1(Types.toNumber(null));
-					estadisticaElement.setLiqBinG5Docr2(Types.toNumber(null));
-					estadisticaElement.setLiqBinG5Docr3(Types.toNumber(null));
-					estadisticaElement.setLiqBinG5Docr4(Types.toNumber(null));
-					estadisticaElement.setLiqBinG6Docr1(Types.toNumber(null));
-					estadisticaElement.setLiqBinG6Docr2(Types.toNumber(null));
-					estadisticaElement.setLiqBinG6Docr3(Types.toNumber(null));
-					estadisticaElement.setLiqBinG6Docr4(Types.toNumber(null));
-					estadisticaElement.setLiqBinRestoDocr1(Types.toNumber(null));
-					estadisticaElement.setLiqBinRestoDocr2(Types.toNumber(null));
-					estadisticaElement.setLiqBinRestoDocr3(Types.toNumber(null));
-					estadisticaElement.setLiqBinRestoDocr4(Types.toNumber(null));
-					estadisticaElement.setLiqBinG1R1(Types.toNumber(null));
-					estadisticaElement.setLiqBinG1R2(Types.toNumber(null));
-					estadisticaElement.setLiqBinG1R3(Types.toNumber(null));
-					estadisticaElement.setLiqBinG1R4(Types.toNumber(null));
-					estadisticaElement.setLiqBinG2R1(Types.toNumber(null));
-					estadisticaElement.setLiqBinG2R2(Types.toNumber(null));
-					estadisticaElement.setLiqBinG2R3(Types.toNumber(null));
-					estadisticaElement.setLiqBinG2R4(Types.toNumber(null));
-					estadisticaElement.setLiqBinG3R1(Types.toNumber(null));
-					estadisticaElement.setLiqBinG3R2(Types.toNumber(null));
-					estadisticaElement.setLiqBinG3R3(Types.toNumber(null));
-					estadisticaElement.setLiqBinG3R4(Types.toNumber(null));
-					estadisticaElement.setLiqBinG4R1(Types.toNumber(null));
-					estadisticaElement.setLiqBinG4R2(Types.toNumber(null));
-					estadisticaElement.setLiqBinG4R3(Types.toNumber(null));
-					estadisticaElement.setLiqBinG4R4(Types.toNumber(null));
-					estadisticaElement.setLiqBinG5R1(Types.toNumber(null));
-					estadisticaElement.setLiqBinG5R2(Types.toNumber(null));
-					estadisticaElement.setLiqBinG5R3(Types.toNumber(null));
-					estadisticaElement.setLiqBinG5R4(Types.toNumber(null));
-					estadisticaElement.setLiqBinG6R1(Types.toNumber(null));
-					estadisticaElement.setLiqBinG6R2(Types.toNumber(null));
-					estadisticaElement.setLiqBinG6R3(Types.toNumber(null));
-					estadisticaElement.setLiqBinG6R4(Types.toNumber(null));
-					estadisticaElement.setLiqBinRestoR1(Types.toNumber(null));
-					estadisticaElement.setLiqBinRestoR2(Types.toNumber(null));
-					estadisticaElement.setLiqBinRestoR3(Types.toNumber(null));
-					estadisticaElement.setLiqBinRestoR4(Types.toNumber(null));
+					estadisticaElement.setLiqBinG1DoctTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinG2DoctTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinG3DoctTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinG4DoctTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinG5DoctTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinG6DoctTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinRestoDoctTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinG1TTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinG2TTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinG3TTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinG4TTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinG5TTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinG6TTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinRestoTTotal(NNumber.getNull());
+					estadisticaElement.setLiqBinG1Docr1(NNumber.getNull());
+					estadisticaElement.setLiqBinG1Docr2(NNumber.getNull());
+					estadisticaElement.setLiqBinG1Docr3(NNumber.getNull());
+					estadisticaElement.setLiqBinG1Docr4(NNumber.getNull());
+					estadisticaElement.setLiqBinG2Docr1(NNumber.getNull());
+					estadisticaElement.setLiqBinG2Docr2(NNumber.getNull());
+					estadisticaElement.setLiqBinG2Docr3(NNumber.getNull());
+					estadisticaElement.setLiqBinG2Docr4(NNumber.getNull());
+					estadisticaElement.setLiqBinG3Docr1(NNumber.getNull());
+					estadisticaElement.setLiqBinG3Docr2(NNumber.getNull());
+					estadisticaElement.setLiqBinG3Docr3(NNumber.getNull());
+					estadisticaElement.setLiqBinG3Docr4(NNumber.getNull());
+					estadisticaElement.setLiqBinG4Docr1(NNumber.getNull());
+					estadisticaElement.setLiqBinG4Docr2(NNumber.getNull());
+					estadisticaElement.setLiqBinG4Docr3(NNumber.getNull());
+					estadisticaElement.setLiqBinG4Docr4(NNumber.getNull());
+					estadisticaElement.setLiqBinG5Docr1(NNumber.getNull());
+					estadisticaElement.setLiqBinG5Docr2(NNumber.getNull());
+					estadisticaElement.setLiqBinG5Docr3(NNumber.getNull());
+					estadisticaElement.setLiqBinG5Docr4(NNumber.getNull());
+					estadisticaElement.setLiqBinG6Docr1(NNumber.getNull());
+					estadisticaElement.setLiqBinG6Docr2(NNumber.getNull());
+					estadisticaElement.setLiqBinG6Docr3(NNumber.getNull());
+					estadisticaElement.setLiqBinG6Docr4(NNumber.getNull());
+					estadisticaElement.setLiqBinRestoDocr1(NNumber.getNull());
+					estadisticaElement.setLiqBinRestoDocr2(NNumber.getNull());
+					estadisticaElement.setLiqBinRestoDocr3(NNumber.getNull());
+					estadisticaElement.setLiqBinRestoDocr4(NNumber.getNull());
+					estadisticaElement.setLiqBinG1R1(NNumber.getNull());
+					estadisticaElement.setLiqBinG1R2(NNumber.getNull());
+					estadisticaElement.setLiqBinG1R3(NNumber.getNull());
+					estadisticaElement.setLiqBinG1R4(NNumber.getNull());
+					estadisticaElement.setLiqBinG2R1(NNumber.getNull());
+					estadisticaElement.setLiqBinG2R2(NNumber.getNull());
+					estadisticaElement.setLiqBinG2R3(NNumber.getNull());
+					estadisticaElement.setLiqBinG2R4(NNumber.getNull());
+					estadisticaElement.setLiqBinG3R1(NNumber.getNull());
+					estadisticaElement.setLiqBinG3R2(NNumber.getNull());
+					estadisticaElement.setLiqBinG3R3(NNumber.getNull());
+					estadisticaElement.setLiqBinG3R4(NNumber.getNull());
+					estadisticaElement.setLiqBinG4R1(NNumber.getNull());
+					estadisticaElement.setLiqBinG4R2(NNumber.getNull());
+					estadisticaElement.setLiqBinG4R3(NNumber.getNull());
+					estadisticaElement.setLiqBinG4R4(NNumber.getNull());
+					estadisticaElement.setLiqBinG5R1(NNumber.getNull());
+					estadisticaElement.setLiqBinG5R2(NNumber.getNull());
+					estadisticaElement.setLiqBinG5R3(NNumber.getNull());
+					estadisticaElement.setLiqBinG5R4(NNumber.getNull());
+					estadisticaElement.setLiqBinG6R1(NNumber.getNull());
+					estadisticaElement.setLiqBinG6R2(NNumber.getNull());
+					estadisticaElement.setLiqBinG6R3(NNumber.getNull());
+					estadisticaElement.setLiqBinG6R4(NNumber.getNull());
+					estadisticaElement.setLiqBinRestoR1(NNumber.getNull());
+					estadisticaElement.setLiqBinRestoR2(NNumber.getNull());
+					estadisticaElement.setLiqBinRestoR3(NNumber.getNull());
+					estadisticaElement.setLiqBinRestoR4(NNumber.getNull());
 				} else {
 					estadisticaElement.setVerLiqBingo(Types.toStr("S"));
 				}
@@ -1176,13 +1176,13 @@ public class EstadisticaController extends DefaultSurBlockController {
 
 	/* Original PL/SQL code code for TRIGGER VER_CASINO.WHEN-CHECKBOX-CHANGED
 	 COMPRUEBA_INDICADORES('CASINOS');
-	
+
 	IF :SYSTEM.MODE='NORMAL' THEN
 	IF :ESTADISTICA.VER_CASINO='S' THEN
 	--SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
 	--CASINOS
 	SET_TAB_PAGE_PROPERTY('CASINOS',VISIBLE,PROPERTY_TRUE);
-	
+
 	CALCULA_ESTADISTICA_CASINO;
 	ELSE
 	--SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE BORRA TODO LO DE CASINOS
@@ -1190,7 +1190,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	MOSTRAR_MENSAJE('SUR-02000 #1#2¿Desea borrar la estadística de casinos?','D',FALSE);
 	IF NVL(:GLOBAL.QMS$DIALOG_ANSWER,'N')='Y' THEN
 	SET_TAB_PAGE_PROPERTY('CASINOS',VISIBLE,PROPERTY_FALSE);
-	
+
 	:CASINO_DOCT1:=NULL;
 	:CASINO_T1:=NULL;
 	:CASINO_DOCR1:=NULL;
@@ -1207,7 +1207,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:CASINO_T4:=NULL;
 	:CASINO_DOCR4:=NULL;
 	:CASINO_R4:=NULL;
-	
+
 	ELSE
 	:ESTADISTICA.VER_CASINO:='S';
 	END IF;
@@ -1219,8 +1219,8 @@ public class EstadisticaController extends DefaultSurBlockController {
 	SET_TAB_PAGE_PROPERTY('CASINOS',VISIBLE,PROPERTY_FALSE);
 	END IF;
 	END IF;
-	
-	
+
+
 	*/
 	/*
 	 *<p>
@@ -1236,37 +1236,37 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void verCasino_checkBoxChange() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
-		this.getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("CASINOS"));
+		getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("CASINOS"));
 		if (TaskServices.getMode().equals("NORMAL")) {
 			if (estadisticaElement.getVerCasino().equals("S")) {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
 				// CASINOS
 				ViewServices.setTabPageVisible("CASINOS", true);
-				this.getTask().getServices().calculaEstadisticaCasino(estadisticaElement);
+				getTask().getServices().calculaEstadisticaCasino(estadisticaElement);
 			} else {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE BORRA TODO LO DE CASINOS
 				// SE PIDE CONFIRMACION
-				this.getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de casinos?"), Types.toStr("D"), Types.toBool(NBool.False));
+				getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de casinos?"), Types.toStr("D"), Types.toBool(NBool.False));
 				if (Lib.isNull(Globals.getGlobal("QMS$DIALOG_ANSWER"), "N").equals("Y")) {
 					ViewServices.setTabPageVisible("CASINOS", false);
-					estadisticaElement.setCasinoDoct1(Types.toNumber(null));
-					estadisticaElement.setCasinoT1(Types.toNumber(null));
-					estadisticaElement.setCasinoDocr1(Types.toNumber(null));
-					estadisticaElement.setCasinoR1(Types.toNumber(null));
-					estadisticaElement.setCasinoDoct2(Types.toNumber(null));
-					estadisticaElement.setCasinoT2(Types.toNumber(null));
-					estadisticaElement.setCasinoDocr2(Types.toNumber(null));
-					estadisticaElement.setCasinoR2(Types.toNumber(null));
-					estadisticaElement.setCasinoDoct3(Types.toNumber(null));
-					estadisticaElement.setCasinoT3(Types.toNumber(null));
-					estadisticaElement.setCasinoDocr3(Types.toNumber(null));
-					estadisticaElement.setCasinoR3(Types.toNumber(null));
-					estadisticaElement.setCasinoDoct4(Types.toNumber(null));
-					estadisticaElement.setCasinoT4(Types.toNumber(null));
-					estadisticaElement.setCasinoDocr4(Types.toNumber(null));
-					estadisticaElement.setCasinoR4(Types.toNumber(null));
+					estadisticaElement.setCasinoDoct1(NNumber.getNull());
+					estadisticaElement.setCasinoT1(NNumber.getNull());
+					estadisticaElement.setCasinoDocr1(NNumber.getNull());
+					estadisticaElement.setCasinoR1(NNumber.getNull());
+					estadisticaElement.setCasinoDoct2(NNumber.getNull());
+					estadisticaElement.setCasinoT2(NNumber.getNull());
+					estadisticaElement.setCasinoDocr2(NNumber.getNull());
+					estadisticaElement.setCasinoR2(NNumber.getNull());
+					estadisticaElement.setCasinoDoct3(NNumber.getNull());
+					estadisticaElement.setCasinoT3(NNumber.getNull());
+					estadisticaElement.setCasinoDocr3(NNumber.getNull());
+					estadisticaElement.setCasinoR3(NNumber.getNull());
+					estadisticaElement.setCasinoDoct4(NNumber.getNull());
+					estadisticaElement.setCasinoT4(NNumber.getNull());
+					estadisticaElement.setCasinoDocr4(NNumber.getNull());
+					estadisticaElement.setCasinoR4(NNumber.getNull());
 				} else {
 					estadisticaElement.setVerCasino(Types.toStr("S"));
 				}
@@ -1282,7 +1282,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 
 	/* Original PL/SQL code code for TRIGGER VER_LIQ_CASINO.WHEN-CHECKBOX-CHANGED
 	 COMPRUEBA_INDICADORES('LIQ_CASINOS');
-	
+
 	IF :SYSTEM.MODE='NORMAL' THEN
 	IF :ESTADISTICA.VER_LIQ_CASINO='S' THEN
 	--SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
@@ -1295,7 +1295,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	MOSTRAR_MENSAJE('SUR-02000 #1#2¿Desea borrar la estadística de liquidaciones de casinos?','D',FALSE);
 	IF NVL(:GLOBAL.QMS$DIALOG_ANSWER,'N')='Y' THEN
 	SET_TAB_PAGE_PROPERTY('LIQ_CASINOS',VISIBLE,PROPERTY_FALSE);
-	
+
 	:ESTADISTICA.LIQ_CAS_G1_DOCT1:=NULL;
 	:ESTADISTICA.LIQ_CAS_G1_T1:=NULL;
 	:ESTADISTICA.LIQ_CAS_G1_DOCR1:=NULL;
@@ -1324,7 +1324,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQ_CAS_RESTO_T1:=NULL;
 	:ESTADISTICA.LIQ_CAS_RESTO_DOCR1:=NULL;
 	:ESTADISTICA.LIQ_CAS_RESTO_R1:=NULL;
-	
+
 	:ESTADISTICA.LIQ_CAS_G1_DOCT2:=NULL;
 	:ESTADISTICA.LIQ_CAS_G1_T2:=NULL;
 	:ESTADISTICA.LIQ_CAS_G1_DOCR2:=NULL;
@@ -1353,7 +1353,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQ_CAS_RESTO_T2:=NULL;
 	:ESTADISTICA.LIQ_CAS_RESTO_DOCR2:=NULL;
 	:ESTADISTICA.LIQ_CAS_RESTO_R2:=NULL;
-	
+
 	:ESTADISTICA.LIQ_CAS_G1_DOCT3:=NULL;
 	:ESTADISTICA.LIQ_CAS_G1_T3:=NULL;
 	:ESTADISTICA.LIQ_CAS_G1_DOCR3:=NULL;
@@ -1382,7 +1382,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQ_CAS_RESTO_T3:=NULL;
 	:ESTADISTICA.LIQ_CAS_RESTO_DOCR3:=NULL;
 	:ESTADISTICA.LIQ_CAS_RESTO_R3:=NULL;
-	
+
 	:ESTADISTICA.LIQ_CAS_G1_DOCT4:=NULL;
 	:ESTADISTICA.LIQ_CAS_G1_T4:=NULL;
 	:ESTADISTICA.LIQ_CAS_G1_DOCR4:=NULL;
@@ -1411,24 +1411,24 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQ_CAS_RESTO_T4:=NULL;
 	:ESTADISTICA.LIQ_CAS_RESTO_DOCR4:=NULL;
 	:ESTADISTICA.LIQ_CAS_RESTO_R4:=NULL;
-	
-	
-	
-	
+
+
+
+
 	ELSE
 	:ESTADISTICA.VER_LIQ_CASINO:='S';
 	END IF;
 	END IF;
-	
+
 	ELSE --OTRO MODO
-	
+
 	IF :ESTADISTICA.VER_LIQ_CASINO='S' THEN
 	SET_TAB_PAGE_PROPERTY('LIQ_CASINOS',VISIBLE,PROPERTY_TRUE);
 	ELSE
 	SET_TAB_PAGE_PROPERTY('LIQ_CASINOS',VISIBLE,PROPERTY_FALSE);
 	END IF;
 	END IF;
-	
+
 	*/
 	/*
 	 *<p>
@@ -1444,133 +1444,133 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void verLiqCasino_checkBoxChange() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
-		this.getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("LIQ_CASINOS"));
+		getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("LIQ_CASINOS"));
 		if (TaskServices.getMode().equals("NORMAL")) {
 			if (estadisticaElement.getVerLiqCasino().equals("S")) {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
 				// LIQUIDACIONES DE CASINOS
 				ViewServices.setTabPageVisible("LIQ_CASINOS", true);
-				this.getTask().getServices().calculaEstadisticaLiqCasino(estadisticaElement);
+				getTask().getServices().calculaEstadisticaLiqCasino(estadisticaElement);
 			} else {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE BORRA TODO LO DE LIQUIDACIONES DE CASINOS
 				// SE PIDE CONFIRMACION
-				this.getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de liquidaciones de casinos?"), Types.toStr("D"), Types.toBool(NBool.False));
+				getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de liquidaciones de casinos?"), Types.toStr("D"), Types.toBool(NBool.False));
 				if (Lib.isNull(Globals.getGlobal("QMS$DIALOG_ANSWER"), "N").equals("Y")) {
 					ViewServices.setTabPageVisible("LIQ_CASINOS", false);
-					estadisticaElement.setLiqCasG1Doct1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1T1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1Docr1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1R1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2Doct1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2T1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2Docr1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2R1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3Doct1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3T1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3Docr1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3R1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4Doct1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4T1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4Docr1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4R1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5Doct1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5T1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5Docr1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5R1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6Doct1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6T1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6Docr1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6R1(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoDoct1(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoT1(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoDocr1(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoR1(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1Doct2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1T2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1Docr2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1R2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2Doct2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2T2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2Docr2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2R2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3Doct2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3T2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3Docr2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3R2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4Doct2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4T2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4Docr2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4R2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5Doct2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5T2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5Docr2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5R2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6Doct2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6T2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6Docr2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6R2(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoDoct2(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoT2(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoDocr2(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoR2(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1Doct3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1T3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1Docr3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1R3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2Doct3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2T3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2Docr3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2R3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3Doct3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3T3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3Docr3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3R3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4Doct3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4T3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4Docr3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4R3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5Doct3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5T3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5Docr3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5R3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6Doct3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6T3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6Docr3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6R3(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoDoct3(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoT3(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoDocr3(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoR3(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1Doct4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1T4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1Docr4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG1R4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2Doct4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2T4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2Docr4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG2R4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3Doct4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3T4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3Docr4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG3R4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4Doct4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4T4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4Docr4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG4R4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5Doct4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5T4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5Docr4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG5R4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6Doct4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6T4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6Docr4(Types.toNumber(null));
-					estadisticaElement.setLiqCasG6R4(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoDoct4(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoT4(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoDocr4(Types.toNumber(null));
-					estadisticaElement.setLiqCasRestoR4(Types.toNumber(null));
+					estadisticaElement.setLiqCasG1Doct1(NNumber.getNull());
+					estadisticaElement.setLiqCasG1T1(NNumber.getNull());
+					estadisticaElement.setLiqCasG1Docr1(NNumber.getNull());
+					estadisticaElement.setLiqCasG1R1(NNumber.getNull());
+					estadisticaElement.setLiqCasG2Doct1(NNumber.getNull());
+					estadisticaElement.setLiqCasG2T1(NNumber.getNull());
+					estadisticaElement.setLiqCasG2Docr1(NNumber.getNull());
+					estadisticaElement.setLiqCasG2R1(NNumber.getNull());
+					estadisticaElement.setLiqCasG3Doct1(NNumber.getNull());
+					estadisticaElement.setLiqCasG3T1(NNumber.getNull());
+					estadisticaElement.setLiqCasG3Docr1(NNumber.getNull());
+					estadisticaElement.setLiqCasG3R1(NNumber.getNull());
+					estadisticaElement.setLiqCasG4Doct1(NNumber.getNull());
+					estadisticaElement.setLiqCasG4T1(NNumber.getNull());
+					estadisticaElement.setLiqCasG4Docr1(NNumber.getNull());
+					estadisticaElement.setLiqCasG4R1(NNumber.getNull());
+					estadisticaElement.setLiqCasG5Doct1(NNumber.getNull());
+					estadisticaElement.setLiqCasG5T1(NNumber.getNull());
+					estadisticaElement.setLiqCasG5Docr1(NNumber.getNull());
+					estadisticaElement.setLiqCasG5R1(NNumber.getNull());
+					estadisticaElement.setLiqCasG6Doct1(NNumber.getNull());
+					estadisticaElement.setLiqCasG6T1(NNumber.getNull());
+					estadisticaElement.setLiqCasG6Docr1(NNumber.getNull());
+					estadisticaElement.setLiqCasG6R1(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoDoct1(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoT1(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoDocr1(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoR1(NNumber.getNull());
+					estadisticaElement.setLiqCasG1Doct2(NNumber.getNull());
+					estadisticaElement.setLiqCasG1T2(NNumber.getNull());
+					estadisticaElement.setLiqCasG1Docr2(NNumber.getNull());
+					estadisticaElement.setLiqCasG1R2(NNumber.getNull());
+					estadisticaElement.setLiqCasG2Doct2(NNumber.getNull());
+					estadisticaElement.setLiqCasG2T2(NNumber.getNull());
+					estadisticaElement.setLiqCasG2Docr2(NNumber.getNull());
+					estadisticaElement.setLiqCasG2R2(NNumber.getNull());
+					estadisticaElement.setLiqCasG3Doct2(NNumber.getNull());
+					estadisticaElement.setLiqCasG3T2(NNumber.getNull());
+					estadisticaElement.setLiqCasG3Docr2(NNumber.getNull());
+					estadisticaElement.setLiqCasG3R2(NNumber.getNull());
+					estadisticaElement.setLiqCasG4Doct2(NNumber.getNull());
+					estadisticaElement.setLiqCasG4T2(NNumber.getNull());
+					estadisticaElement.setLiqCasG4Docr2(NNumber.getNull());
+					estadisticaElement.setLiqCasG4R2(NNumber.getNull());
+					estadisticaElement.setLiqCasG5Doct2(NNumber.getNull());
+					estadisticaElement.setLiqCasG5T2(NNumber.getNull());
+					estadisticaElement.setLiqCasG5Docr2(NNumber.getNull());
+					estadisticaElement.setLiqCasG5R2(NNumber.getNull());
+					estadisticaElement.setLiqCasG6Doct2(NNumber.getNull());
+					estadisticaElement.setLiqCasG6T2(NNumber.getNull());
+					estadisticaElement.setLiqCasG6Docr2(NNumber.getNull());
+					estadisticaElement.setLiqCasG6R2(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoDoct2(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoT2(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoDocr2(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoR2(NNumber.getNull());
+					estadisticaElement.setLiqCasG1Doct3(NNumber.getNull());
+					estadisticaElement.setLiqCasG1T3(NNumber.getNull());
+					estadisticaElement.setLiqCasG1Docr3(NNumber.getNull());
+					estadisticaElement.setLiqCasG1R3(NNumber.getNull());
+					estadisticaElement.setLiqCasG2Doct3(NNumber.getNull());
+					estadisticaElement.setLiqCasG2T3(NNumber.getNull());
+					estadisticaElement.setLiqCasG2Docr3(NNumber.getNull());
+					estadisticaElement.setLiqCasG2R3(NNumber.getNull());
+					estadisticaElement.setLiqCasG3Doct3(NNumber.getNull());
+					estadisticaElement.setLiqCasG3T3(NNumber.getNull());
+					estadisticaElement.setLiqCasG3Docr3(NNumber.getNull());
+					estadisticaElement.setLiqCasG3R3(NNumber.getNull());
+					estadisticaElement.setLiqCasG4Doct3(NNumber.getNull());
+					estadisticaElement.setLiqCasG4T3(NNumber.getNull());
+					estadisticaElement.setLiqCasG4Docr3(NNumber.getNull());
+					estadisticaElement.setLiqCasG4R3(NNumber.getNull());
+					estadisticaElement.setLiqCasG5Doct3(NNumber.getNull());
+					estadisticaElement.setLiqCasG5T3(NNumber.getNull());
+					estadisticaElement.setLiqCasG5Docr3(NNumber.getNull());
+					estadisticaElement.setLiqCasG5R3(NNumber.getNull());
+					estadisticaElement.setLiqCasG6Doct3(NNumber.getNull());
+					estadisticaElement.setLiqCasG6T3(NNumber.getNull());
+					estadisticaElement.setLiqCasG6Docr3(NNumber.getNull());
+					estadisticaElement.setLiqCasG6R3(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoDoct3(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoT3(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoDocr3(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoR3(NNumber.getNull());
+					estadisticaElement.setLiqCasG1Doct4(NNumber.getNull());
+					estadisticaElement.setLiqCasG1T4(NNumber.getNull());
+					estadisticaElement.setLiqCasG1Docr4(NNumber.getNull());
+					estadisticaElement.setLiqCasG1R4(NNumber.getNull());
+					estadisticaElement.setLiqCasG2Doct4(NNumber.getNull());
+					estadisticaElement.setLiqCasG2T4(NNumber.getNull());
+					estadisticaElement.setLiqCasG2Docr4(NNumber.getNull());
+					estadisticaElement.setLiqCasG2R4(NNumber.getNull());
+					estadisticaElement.setLiqCasG3Doct4(NNumber.getNull());
+					estadisticaElement.setLiqCasG3T4(NNumber.getNull());
+					estadisticaElement.setLiqCasG3Docr4(NNumber.getNull());
+					estadisticaElement.setLiqCasG3R4(NNumber.getNull());
+					estadisticaElement.setLiqCasG4Doct4(NNumber.getNull());
+					estadisticaElement.setLiqCasG4T4(NNumber.getNull());
+					estadisticaElement.setLiqCasG4Docr4(NNumber.getNull());
+					estadisticaElement.setLiqCasG4R4(NNumber.getNull());
+					estadisticaElement.setLiqCasG5Doct4(NNumber.getNull());
+					estadisticaElement.setLiqCasG5T4(NNumber.getNull());
+					estadisticaElement.setLiqCasG5Docr4(NNumber.getNull());
+					estadisticaElement.setLiqCasG5R4(NNumber.getNull());
+					estadisticaElement.setLiqCasG6Doct4(NNumber.getNull());
+					estadisticaElement.setLiqCasG6T4(NNumber.getNull());
+					estadisticaElement.setLiqCasG6Docr4(NNumber.getNull());
+					estadisticaElement.setLiqCasG6R4(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoDoct4(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoT4(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoDocr4(NNumber.getNull());
+					estadisticaElement.setLiqCasRestoR4(NNumber.getNull());
 				} else {
 					estadisticaElement.setVerLiqCasino(Types.toStr("S"));
 				}
@@ -1587,13 +1587,13 @@ public class EstadisticaController extends DefaultSurBlockController {
 
 	/* Original PL/SQL code code for TRIGGER VER_OTROS.WHEN-CHECKBOX-CHANGED
 	 COMPRUEBA_INDICADORES('OTROS');
-	
+
 	IF :SYSTEM.MODE='NORMAL' THEN
 	IF :ESTADISTICA.VER_OTROS='S' THEN
 	--SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
 	--OTROS CONCEPTOS
 	SET_TAB_PAGE_PROPERTY('OTROS',VISIBLE,PROPERTY_TRUE);
-	
+
 	CALCULA_ESTADISTICA_LIQ_OTROS;
 	ELSE
 	--SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE BORRA TODO LO DE OTROS
@@ -1601,7 +1601,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	MOSTRAR_MENSAJE('SUR-02000 #1#2¿Desea borrar la estadística de otros conceptos?','D',FALSE);
 	IF NVL(:GLOBAL.QMS$DIALOG_ANSWER,'N')='Y' THEN
 	SET_TAB_PAGE_PROPERTY('OTROS',VISIBLE,PROPERTY_FALSE);
-	
+
 	:ESTADISTICA.LIQ_OTRO_DOC_G1_COMB:=NULL;
 	:ESTADISTICA.LIQ_OTRO_DOC_G1_APUE:=NULL;
 	:ESTADISTICA.LIQ_OTRO_DOC_G1_RIFA:=NULL;
@@ -1630,7 +1630,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQ_OTRO_DOC_RESTO_APUE:=NULL;
 	:ESTADISTICA.LIQ_OTRO_DOC_RESTO_RIFA:=NULL;
 	:ESTADISTICA.LIQ_OTRO_DOC_RESTO_BOLE:=NULL;
-	
+
 	:ESTADISTICA.LIQ_OTRO_T_G1_COMB:=NULL;
 	:ESTADISTICA.LIQ_OTRO_T_G1_APUE:=NULL;
 	:ESTADISTICA.LIQ_OTRO_T_G1_RIFA:=NULL;
@@ -1659,8 +1659,8 @@ public class EstadisticaController extends DefaultSurBlockController {
 	:ESTADISTICA.LIQ_OTRO_T_RESTO_APUE:=NULL;
 	:ESTADISTICA.LIQ_OTRO_T_RESTO_RIFA:=NULL;
 	:ESTADISTICA.LIQ_OTRO_T_RESTO_BOLE:=NULL;
-	
-	
+
+
 	ELSE
 	:ESTADISTICA.VER_OTROS:='S';
 	END IF;
@@ -1672,8 +1672,8 @@ public class EstadisticaController extends DefaultSurBlockController {
 	SET_TAB_PAGE_PROPERTY('OTROS',VISIBLE,PROPERTY_FALSE);
 	END IF;
 	END IF;
-	
-	
+
+
 	*/
 	/*
 	 *<p>
@@ -1689,77 +1689,77 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void verOtros_checkBoxChange() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
-		this.getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("OTROS"));
+		getTask().getServices().compruebaIndicadores(estadisticaElement, Types.toStr("OTROS"));
 		if (TaskServices.getMode().equals("NORMAL")) {
 			if (estadisticaElement.getVerOtros().equals("S")) {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE REALIZA LA ESTADISTICA DE
 				// OTROS CONCEPTOS
 				ViewServices.setTabPageVisible("OTROS", true);
-				this.getTask().getServices().calculaEstadisticaLiqOtros(estadisticaElement);
+				getTask().getServices().calculaEstadisticaLiqOtros(estadisticaElement);
 			} else {
 				// SI SE CAMBIA A MARCADO (ESTABA NO MARCADO) SE BORRA TODO LO DE OTROS
 				// SE PIDE CONFIRMACION
-				this.getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de otros conceptos?"), Types.toStr("D"), Types.toBool(NBool.False));
+				getTask().getServices().mostrarMensaje(Types.toStr("SUR-02000 #1#2¿Desea borrar la estadística de otros conceptos?"), Types.toStr("D"), Types.toBool(NBool.False));
 				if (Lib.isNull(Globals.getGlobal("QMS$DIALOG_ANSWER"), "N").equals("Y")) {
 					ViewServices.setTabPageVisible("OTROS", false);
-					estadisticaElement.setLiqOtroDocG1Comb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG1Apue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG1Rifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG1Bole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG2Comb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG2Apue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG2Rifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG2Bole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG3Comb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG3Apue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG3Rifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG3Bole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG4Comb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG4Apue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG4Rifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG4Bole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG5Comb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG5Apue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG5Rifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG5Bole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG6Comb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG6Apue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG6Rifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocG6Bole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocRestoComb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocRestoApue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocRestoRifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroDocRestoBole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG1Comb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG1Apue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG1Rifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG1Bole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG2Comb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG2Apue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG2Rifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG2Bole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG3Comb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG3Apue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG3Rifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG3Bole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG4Comb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG4Apue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG4Rifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG4Bole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG5Comb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG5Apue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG5Rifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG5Bole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG6Comb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG6Apue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG6Rifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTG6Bole(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTRestoComb(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTRestoApue(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTRestoRifa(Types.toNumber(null));
-					estadisticaElement.setLiqOtroTRestoBole(Types.toNumber(null));
+					estadisticaElement.setLiqOtroDocG1Comb(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG1Apue(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG1Rifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG1Bole(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG2Comb(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG2Apue(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG2Rifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG2Bole(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG3Comb(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG3Apue(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG3Rifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG3Bole(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG4Comb(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG4Apue(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG4Rifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG4Bole(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG5Comb(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG5Apue(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG5Rifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG5Bole(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG6Comb(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG6Apue(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG6Rifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocG6Bole(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocRestoComb(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocRestoApue(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocRestoRifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroDocRestoBole(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG1Comb(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG1Apue(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG1Rifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG1Bole(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG2Comb(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG2Apue(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG2Rifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG2Bole(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG3Comb(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG3Apue(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG3Rifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG3Bole(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG4Comb(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG4Apue(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG4Rifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG4Bole(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG5Comb(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG5Apue(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG5Rifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG5Bole(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG6Comb(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG6Apue(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG6Rifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroTG6Bole(NNumber.getNull());
+					estadisticaElement.setLiqOtroTRestoComb(NNumber.getNull());
+					estadisticaElement.setLiqOtroTRestoApue(NNumber.getNull());
+					estadisticaElement.setLiqOtroTRestoRifa(NNumber.getNull());
+					estadisticaElement.setLiqOtroTRestoBole(NNumber.getNull());
 				} else {
 					estadisticaElement.setVerOtros(Types.toStr("S"));
 				}
@@ -1792,7 +1792,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void docsttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setDocsttotal(((estadisticaElement.getDocst1().add(estadisticaElement.getDocst2()).add(estadisticaElement.getDocst3()).add(estadisticaElement.getDocst4()))));
 	}
@@ -1816,7 +1816,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void tasatotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setTasatotal(((estadisticaElement.getTasa1().add(estadisticaElement.getTasa2()).add(estadisticaElement.getTasa3()).add(estadisticaElement.getTasa4()))));
 	}
@@ -1840,7 +1840,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void docsrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setDocsrtotal(((estadisticaElement.getDocsr1().add(estadisticaElement.getDocsr2()).add(estadisticaElement.getDocsr3()).add(estadisticaElement.getDocsr4()))));
 	}
@@ -1864,7 +1864,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void recargototal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setRecargototal(((estadisticaElement.getRecargo1().add(estadisticaElement.getRecargo2()).add(estadisticaElement.getRecargo3()).add(estadisticaElement.getRecargo4()))));
 	}
@@ -1888,7 +1888,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG1Docttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG1Docttotal(((estadisticaElement.getLiquidG1Doct1().add(estadisticaElement.getLiquidG1Doct2()).add(estadisticaElement.getLiquidG1Doct3()).add(estadisticaElement.getLiquidG1Doct4()))));
 	}
@@ -1912,7 +1912,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG2Docttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG2Docttotal(((estadisticaElement.getLiquidG2Doct1().add(estadisticaElement.getLiquidG2Doct2()).add(estadisticaElement.getLiquidG2Doct3()).add(estadisticaElement.getLiquidG2Doct4()))));
 	}
@@ -1936,7 +1936,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG3Docttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG3Docttotal(((estadisticaElement.getLiquidG3Doct1().add(estadisticaElement.getLiquidG3Doct2()).add(estadisticaElement.getLiquidG3Doct3()).add(estadisticaElement.getLiquidG3Doct4()))));
 	}
@@ -1960,7 +1960,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG4Docttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG4Docttotal(((estadisticaElement.getLiquidG4Doct1().add(estadisticaElement.getLiquidG4Doct2()).add(estadisticaElement.getLiquidG4Doct3()).add(estadisticaElement.getLiquidG4Doct4()))));
 	}
@@ -1984,7 +1984,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG5Docttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG5Docttotal(((estadisticaElement.getLiquidG5Doct1().add(estadisticaElement.getLiquidG5Doct2()).add(estadisticaElement.getLiquidG5Doct3()).add(estadisticaElement.getLiquidG5Doct4()))));
 	}
@@ -2008,7 +2008,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG6Docttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG6Docttotal(((estadisticaElement.getLiquidG6Doct1().add(estadisticaElement.getLiquidG6Doct2()).add(estadisticaElement.getLiquidG6Doct3()).add(estadisticaElement.getLiquidG6Doct4()))));
 	}
@@ -2032,7 +2032,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidRestoDocttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidRestoDocttotal(((estadisticaElement.getLiquidRestoDoct1().add(estadisticaElement.getLiquidRestoDoct2()).add(estadisticaElement.getLiquidRestoDoct3()).add(estadisticaElement.getLiquidRestoDoct4()))));
 	}
@@ -2056,7 +2056,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalDoct1_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalDoct1(((estadisticaElement.getLiquidG1Doct1().add(estadisticaElement.getLiquidG2Doct1()).add(estadisticaElement.getLiquidG3Doct1()).add(estadisticaElement.getLiquidG4Doct1()).add(estadisticaElement.getLiquidG5Doct1()).add(estadisticaElement.getLiquidRestoDoct1()))));
 	}
@@ -2080,7 +2080,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalDoct2_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalDoct2(((estadisticaElement.getLiquidG1Doct2().add(estadisticaElement.getLiquidG2Doct2()).add(estadisticaElement.getLiquidG3Doct2()).add(estadisticaElement.getLiquidG4Doct2()).add(estadisticaElement.getLiquidG5Doct2()).add(estadisticaElement.getLiquidRestoDoct2()))));
 	}
@@ -2104,7 +2104,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalDoct3_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalDoct3(((estadisticaElement.getLiquidG1Doct3().add(estadisticaElement.getLiquidG2Doct3()).add(estadisticaElement.getLiquidG3Doct3()).add(estadisticaElement.getLiquidG4Doct3()).add(estadisticaElement.getLiquidG5Doct3()).add(estadisticaElement.getLiquidRestoDoct3()))));
 	}
@@ -2128,7 +2128,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalDoct4_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalDoct4(((estadisticaElement.getLiquidG1Doct4().add(estadisticaElement.getLiquidG2Doct4()).add(estadisticaElement.getLiquidG3Doct4()).add(estadisticaElement.getLiquidG4Doct4()).add(estadisticaElement.getLiquidG5Doct4()).add(estadisticaElement.getLiquidRestoDoct4()))));
 	}
@@ -2152,7 +2152,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalDocttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalDocttotal(((estadisticaElement.getLiquidTotalDoct1().add(estadisticaElement.getLiquidTotalDoct2()).add(estadisticaElement.getLiquidTotalDoct3()).add(estadisticaElement.getLiquidTotalDoct4()))));
 	}
@@ -2176,7 +2176,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG1Ttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG1Ttotal(((estadisticaElement.getLiquidG1T1().add(estadisticaElement.getLiquidG1T2()).add(estadisticaElement.getLiquidG1T3()).add(estadisticaElement.getLiquidG1T4()))));
 	}
@@ -2200,7 +2200,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG2Ttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG2Ttotal(((estadisticaElement.getLiquidG2T1().add(estadisticaElement.getLiquidG2T2()).add(estadisticaElement.getLiquidG2T3()).add(estadisticaElement.getLiquidG2T4()))));
 	}
@@ -2224,7 +2224,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG3Ttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG3Ttotal(((estadisticaElement.getLiquidG3T1().add(estadisticaElement.getLiquidG3T2()).add(estadisticaElement.getLiquidG3T3()).add(estadisticaElement.getLiquidG3T4()))));
 	}
@@ -2248,7 +2248,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG4Ttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG4Ttotal(((estadisticaElement.getLiquidG4T1().add(estadisticaElement.getLiquidG4T2()).add(estadisticaElement.getLiquidG4T3()).add(estadisticaElement.getLiquidG4T4()))));
 	}
@@ -2272,7 +2272,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG5Ttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG5Ttotal(((estadisticaElement.getLiquidG5T1().add(estadisticaElement.getLiquidG5T2()).add(estadisticaElement.getLiquidG5T3()).add(estadisticaElement.getLiquidG5T4()))));
 	}
@@ -2296,7 +2296,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG6Ttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG6Ttotal(((estadisticaElement.getLiquidG6T1().add(estadisticaElement.getLiquidG6T2()).add(estadisticaElement.getLiquidG6T3()).add(estadisticaElement.getLiquidG6T4()))));
 	}
@@ -2320,7 +2320,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidRestoTtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidRestoTtotal(((estadisticaElement.getLiquidRestoT1().add(estadisticaElement.getLiquidRestoT2()).add(estadisticaElement.getLiquidRestoT3()).add(estadisticaElement.getLiquidRestoT4()))));
 	}
@@ -2344,7 +2344,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalT1_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalT1(((estadisticaElement.getLiquidG1T1().add(estadisticaElement.getLiquidG2T1()).add(estadisticaElement.getLiquidG3T1()).add(estadisticaElement.getLiquidG4T1()).add(estadisticaElement.getLiquidG5T1()).add(estadisticaElement.getLiquidRestoT1()))));
 	}
@@ -2368,7 +2368,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalT2_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalT2(((estadisticaElement.getLiquidG1T2().add(estadisticaElement.getLiquidG2T2()).add(estadisticaElement.getLiquidG3T2()).add(estadisticaElement.getLiquidG4T2()).add(estadisticaElement.getLiquidG5T2()).add(estadisticaElement.getLiquidRestoT2()))));
 	}
@@ -2392,7 +2392,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalT3_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalT3(((estadisticaElement.getLiquidG1T3().add(estadisticaElement.getLiquidG2T3()).add(estadisticaElement.getLiquidG3T3()).add(estadisticaElement.getLiquidG4T3()).add(estadisticaElement.getLiquidG5T3()).add(estadisticaElement.getLiquidRestoT3()))));
 	}
@@ -2416,7 +2416,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalT4_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalT4(((estadisticaElement.getLiquidG1T4().add(estadisticaElement.getLiquidG2T4()).add(estadisticaElement.getLiquidG3T4()).add(estadisticaElement.getLiquidG4T4()).add(estadisticaElement.getLiquidG5T4()).add(estadisticaElement.getLiquidRestoT4()))));
 	}
@@ -2440,7 +2440,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalTtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalTtotal(((estadisticaElement.getLiquidTotalT1().add(estadisticaElement.getLiquidTotalT2()).add(estadisticaElement.getLiquidTotalT3()).add(estadisticaElement.getLiquidTotalT4()))));
 	}
@@ -2464,7 +2464,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG1Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG1Docrtotal(((estadisticaElement.getLiquidG1Docr1().add(estadisticaElement.getLiquidG1Docr2()).add(estadisticaElement.getLiquidG1Docr3()).add(estadisticaElement.getLiquidG1Docr4()))));
 	}
@@ -2488,7 +2488,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG2Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG2Docrtotal(((estadisticaElement.getLiquidG2Docr1().add(estadisticaElement.getLiquidG2Docr2()).add(estadisticaElement.getLiquidG2Docr3()).add(estadisticaElement.getLiquidG2Docr4()))));
 	}
@@ -2512,7 +2512,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG3Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG3Docrtotal(((estadisticaElement.getLiquidG3Docr1().add(estadisticaElement.getLiquidG3Docr2()).add(estadisticaElement.getLiquidG3Docr3()).add(estadisticaElement.getLiquidG3Docr4()))));
 	}
@@ -2536,7 +2536,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG4Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG4Docrtotal(((estadisticaElement.getLiquidG4Docr1().add(estadisticaElement.getLiquidG4Docr2()).add(estadisticaElement.getLiquidG4Docr3()).add(estadisticaElement.getLiquidG4Docr4()))));
 	}
@@ -2560,7 +2560,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG5Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG5Docrtotal(((estadisticaElement.getLiquidG5Docr1().add(estadisticaElement.getLiquidG5Docr2()).add(estadisticaElement.getLiquidG5Docr3()).add(estadisticaElement.getLiquidG5Docr4()))));
 	}
@@ -2584,7 +2584,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG6Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG6Docrtotal(((estadisticaElement.getLiquidG6Docr1().add(estadisticaElement.getLiquidG6Docr2()).add(estadisticaElement.getLiquidG6Docr3()).add(estadisticaElement.getLiquidG6Docr4()))));
 	}
@@ -2608,7 +2608,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidRestoDocrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidRestoDocrtotal(((estadisticaElement.getLiquidRestoDocr1().add(estadisticaElement.getLiquidRestoDocr2()).add(estadisticaElement.getLiquidRestoDocr3()).add(estadisticaElement.getLiquidRestoDocr4()))));
 	}
@@ -2632,7 +2632,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalDocr1_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalDocr1(((estadisticaElement.getLiquidG1Docr1().add(estadisticaElement.getLiquidG2Docr1()).add(estadisticaElement.getLiquidG3Docr1()).add(estadisticaElement.getLiquidG4Docr1()).add(estadisticaElement.getLiquidG5Docr1()).add(estadisticaElement.getLiquidRestoDocr1()))));
 	}
@@ -2656,7 +2656,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalDocr2_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalDocr2(((estadisticaElement.getLiquidG1Docr2().add(estadisticaElement.getLiquidG2Docr2()).add(estadisticaElement.getLiquidG3Docr2()).add(estadisticaElement.getLiquidG4Docr2()).add(estadisticaElement.getLiquidG5Docr2()).add(estadisticaElement.getLiquidRestoDocr2()))));
 	}
@@ -2680,7 +2680,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalDocr3_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalDocr3(((estadisticaElement.getLiquidG1Docr3().add(estadisticaElement.getLiquidG2Docr3()).add(estadisticaElement.getLiquidG3Docr3()).add(estadisticaElement.getLiquidG4Docr3()).add(estadisticaElement.getLiquidG5Docr3()).add(estadisticaElement.getLiquidRestoDocr3()))));
 	}
@@ -2704,7 +2704,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalDocr4_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalDocr4(((estadisticaElement.getLiquidG1Docr4().add(estadisticaElement.getLiquidG2Docr4()).add(estadisticaElement.getLiquidG3Docr4()).add(estadisticaElement.getLiquidG4Docr4()).add(estadisticaElement.getLiquidG5Docr4()).add(estadisticaElement.getLiquidRestoDocr4()))));
 	}
@@ -2728,7 +2728,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalDocrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalDocrtotal(((estadisticaElement.getLiquidTotalDocr1().add(estadisticaElement.getLiquidTotalDocr2()).add(estadisticaElement.getLiquidTotalDocr3()).add(estadisticaElement.getLiquidTotalDocr4()))));
 	}
@@ -2752,7 +2752,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG1Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG1Rtotal(((estadisticaElement.getLiquidG1R1().add(estadisticaElement.getLiquidG1R2()).add(estadisticaElement.getLiquidG1R3()).add(estadisticaElement.getLiquidG1R4()))));
 	}
@@ -2776,7 +2776,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG2Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG2Rtotal(((estadisticaElement.getLiquidG2R1().add(estadisticaElement.getLiquidG2R2()).add(estadisticaElement.getLiquidG2R3()).add(estadisticaElement.getLiquidG2R4()))));
 	}
@@ -2800,7 +2800,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG3Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG3Rtotal(((estadisticaElement.getLiquidG3R1().add(estadisticaElement.getLiquidG3R2()).add(estadisticaElement.getLiquidG3R3()).add(estadisticaElement.getLiquidG3R4()))));
 	}
@@ -2824,7 +2824,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG4Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG4Rtotal(((estadisticaElement.getLiquidG4R1().add(estadisticaElement.getLiquidG4R2()).add(estadisticaElement.getLiquidG4R3()).add(estadisticaElement.getLiquidG4R4()))));
 	}
@@ -2848,7 +2848,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG5Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG5Rtotal(((estadisticaElement.getLiquidG5R1().add(estadisticaElement.getLiquidG5R2()).add(estadisticaElement.getLiquidG5R3()).add(estadisticaElement.getLiquidG5R4()))));
 	}
@@ -2872,7 +2872,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidG6Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidG6Rtotal(((estadisticaElement.getLiquidG6R1().add(estadisticaElement.getLiquidG6R2()).add(estadisticaElement.getLiquidG6R3()).add(estadisticaElement.getLiquidG6R4()))));
 	}
@@ -2896,7 +2896,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidRestoRtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidRestoRtotal(((estadisticaElement.getLiquidRestoR1().add(estadisticaElement.getLiquidRestoR2()).add(estadisticaElement.getLiquidRestoR3()).add(estadisticaElement.getLiquidRestoR4()))));
 	}
@@ -2920,7 +2920,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalR1_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalR1(((estadisticaElement.getLiquidG1R1().add(estadisticaElement.getLiquidG2R1()).add(estadisticaElement.getLiquidG3R1()).add(estadisticaElement.getLiquidG4R1()).add(estadisticaElement.getLiquidG5R1()).add(estadisticaElement.getLiquidRestoR1()))));
 	}
@@ -2944,7 +2944,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalR2_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalR2(((estadisticaElement.getLiquidG1R2().add(estadisticaElement.getLiquidG2R2()).add(estadisticaElement.getLiquidG3R2()).add(estadisticaElement.getLiquidG4R2()).add(estadisticaElement.getLiquidG5R2()).add(estadisticaElement.getLiquidRestoR2()))));
 	}
@@ -2968,7 +2968,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalR3_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalR3(((estadisticaElement.getLiquidG1R3().add(estadisticaElement.getLiquidG2R3()).add(estadisticaElement.getLiquidG3R3()).add(estadisticaElement.getLiquidG4R3()).add(estadisticaElement.getLiquidG5R3()).add(estadisticaElement.getLiquidRestoR3()))));
 	}
@@ -2992,7 +2992,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalR4_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalR4(((estadisticaElement.getLiquidG1R4().add(estadisticaElement.getLiquidG2R4()).add(estadisticaElement.getLiquidG3R4()).add(estadisticaElement.getLiquidG4R4()).add(estadisticaElement.getLiquidG5R4()).add(estadisticaElement.getLiquidRestoR4()))));
 	}
@@ -3016,7 +3016,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liquidTotalRtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiquidTotalRtotal(((estadisticaElement.getLiquidTotalR1().add(estadisticaElement.getLiquidTotalR2()).add(estadisticaElement.getLiquidTotalR3()).add(estadisticaElement.getLiquidTotalR4()))));
 	}
@@ -3038,9 +3038,9 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void rbLiqPeriodo_radioGroupChange() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
-		this.getTask().getServices().visualizacionLiquid(estadisticaElement);
+		getTask().getServices().visualizacionLiquid(estadisticaElement);
 	}
 
 	/* Original PL/SQL code code for TRIGGER BINGO_DOCT1_TOTALT.FORMULA-CALCULATION
@@ -3062,7 +3062,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoDoct1Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoDoct1Totalt(((estadisticaElement.getBingoDoct11t().add(estadisticaElement.getBingoDoct12t()).add(estadisticaElement.getBingoDoct13t()).add(estadisticaElement.getBingoDoct14t()))));
 	}
@@ -3086,7 +3086,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoDoct2Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoDoct2Totalt(((estadisticaElement.getBingoDoct21t().add(estadisticaElement.getBingoDoct22t()).add(estadisticaElement.getBingoDoct23t()).add(estadisticaElement.getBingoDoct24t()))));
 	}
@@ -3110,7 +3110,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoDoct3Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoDoct3Totalt(((estadisticaElement.getBingoDoct31t().add(estadisticaElement.getBingoDoct32t()).add(estadisticaElement.getBingoDoct33t()).add(estadisticaElement.getBingoDoct34t()))));
 	}
@@ -3134,7 +3134,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoDoct4Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoDoct4Totalt(((estadisticaElement.getBingoDoct41t().add(estadisticaElement.getBingoDoct42t()).add(estadisticaElement.getBingoDoct43t()).add(estadisticaElement.getBingoDoct44t()))));
 	}
@@ -3158,7 +3158,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoDocttotal1t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoDocttotal1t(((estadisticaElement.getBingoDoct11t().add(estadisticaElement.getBingoDoct21t()).add(estadisticaElement.getBingoDoct31t()).add(estadisticaElement.getBingoDoct41t()))));
 	}
@@ -3182,7 +3182,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoDocttotal2t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoDocttotal2t(((estadisticaElement.getBingoDoct12t().add(estadisticaElement.getBingoDoct22t()).add(estadisticaElement.getBingoDoct32t()).add(estadisticaElement.getBingoDoct42t()))));
 	}
@@ -3206,7 +3206,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoDocttotal3t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoDocttotal3t(((estadisticaElement.getBingoDoct13t().add(estadisticaElement.getBingoDoct23t()).add(estadisticaElement.getBingoDoct33t()).add(estadisticaElement.getBingoDoct43t()))));
 	}
@@ -3230,7 +3230,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoDocttotal4t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoDocttotal4t(((estadisticaElement.getBingoDoct14t().add(estadisticaElement.getBingoDoct24t()).add(estadisticaElement.getBingoDoct34t()).add(estadisticaElement.getBingoDoct44t()))));
 	}
@@ -3254,7 +3254,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoDocttotalTotalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoDocttotalTotalt(((estadisticaElement.getBingoDocttotal1t().add(estadisticaElement.getBingoDocttotal2t()).add(estadisticaElement.getBingoDocttotal3t()).add(estadisticaElement.getBingoDocttotal4t()))));
 	}
@@ -3278,7 +3278,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoB1Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoB1Totalt(((estadisticaElement.getBingoB11t().add(estadisticaElement.getBingoB12t()).add(estadisticaElement.getBingoB13t()).add(estadisticaElement.getBingoB14t()))));
 	}
@@ -3302,7 +3302,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoB2Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoB2Totalt(((estadisticaElement.getBingoB21t().add(estadisticaElement.getBingoB22t()).add(estadisticaElement.getBingoB23t()).add(estadisticaElement.getBingoB24t()))));
 	}
@@ -3326,7 +3326,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoB3Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoB3Totalt(((estadisticaElement.getBingoB31t().add(estadisticaElement.getBingoB32t()).add(estadisticaElement.getBingoB33t()).add(estadisticaElement.getBingoB34t()))));
 	}
@@ -3350,7 +3350,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoB4Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoB4Totalt(((estadisticaElement.getBingoB41t().add(estadisticaElement.getBingoB42t()).add(estadisticaElement.getBingoB43t()).add(estadisticaElement.getBingoB44t()))));
 	}
@@ -3374,7 +3374,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoBtotal1t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoBtotal1t(((estadisticaElement.getBingoB11t().add(estadisticaElement.getBingoB21t()).add(estadisticaElement.getBingoB31t()).add(estadisticaElement.getBingoB41t()))));
 	}
@@ -3398,7 +3398,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoBtotal2t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoBtotal2t(((estadisticaElement.getBingoB12t().add(estadisticaElement.getBingoB22t()).add(estadisticaElement.getBingoB32t()).add(estadisticaElement.getBingoB42t()))));
 	}
@@ -3422,7 +3422,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoBtotal3t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoBtotal3t(((estadisticaElement.getBingoB13t().add(estadisticaElement.getBingoB23t()).add(estadisticaElement.getBingoB33t()).add(estadisticaElement.getBingoB43t()))));
 	}
@@ -3446,7 +3446,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoBtotal4t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoBtotal4t(((estadisticaElement.getBingoB14t().add(estadisticaElement.getBingoB24t()).add(estadisticaElement.getBingoB34t()).add(estadisticaElement.getBingoB44t()))));
 	}
@@ -3470,7 +3470,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoBtotalTotalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoBtotalTotalt(((estadisticaElement.getBingoBtotal1t().add(estadisticaElement.getBingoBtotal2t()).add(estadisticaElement.getBingoBtotal3t()).add(estadisticaElement.getBingoBtotal4t()))));
 	}
@@ -3494,7 +3494,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoT1Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoT1Totalt(((estadisticaElement.getBingoT11t().add(estadisticaElement.getBingoT12t()).add(estadisticaElement.getBingoT13t()).add(estadisticaElement.getBingoT14t()))));
 	}
@@ -3518,7 +3518,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoT2Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoT2Totalt(((estadisticaElement.getBingoT21t().add(estadisticaElement.getBingoT22t()).add(estadisticaElement.getBingoT23t()).add(estadisticaElement.getBingoT24t()))));
 	}
@@ -3542,7 +3542,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoT3Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoT3Totalt(((estadisticaElement.getBingoT31t().add(estadisticaElement.getBingoT32t()).add(estadisticaElement.getBingoT33t()).add(estadisticaElement.getBingoT34t()))));
 	}
@@ -3566,7 +3566,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoT4Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoT4Totalt(((estadisticaElement.getBingoT41t().add(estadisticaElement.getBingoT42t()).add(estadisticaElement.getBingoT43t()).add(estadisticaElement.getBingoT44t()))));
 	}
@@ -3590,7 +3590,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoTtotal1t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoTtotal1t(((estadisticaElement.getBingoT11t().add(estadisticaElement.getBingoT21t()).add(estadisticaElement.getBingoT31t()).add(estadisticaElement.getBingoT41t()))));
 	}
@@ -3614,7 +3614,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoTtotal2t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoTtotal2t(((estadisticaElement.getBingoT12t().add(estadisticaElement.getBingoT22t()).add(estadisticaElement.getBingoT32t()).add(estadisticaElement.getBingoT42t()))));
 	}
@@ -3638,7 +3638,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoTtotal3t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoTtotal3t(((estadisticaElement.getBingoT13t().add(estadisticaElement.getBingoT23t()).add(estadisticaElement.getBingoT33t()).add(estadisticaElement.getBingoT43t()))));
 	}
@@ -3662,7 +3662,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoTtotal4t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoTtotal4t(((estadisticaElement.getBingoT14t().add(estadisticaElement.getBingoT24t()).add(estadisticaElement.getBingoT34t()).add(estadisticaElement.getBingoT44t()))));
 	}
@@ -3686,7 +3686,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoTtotalTotalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoTtotalTotalt(((estadisticaElement.getBingoTtotal1t().add(estadisticaElement.getBingoTtotal2t()).add(estadisticaElement.getBingoTtotal3t()).add(estadisticaElement.getBingoTtotal4t()))));
 	}
@@ -3710,7 +3710,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoR1Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoR1Totalt(((estadisticaElement.getBingoR11t().add(estadisticaElement.getBingoR12t()).add(estadisticaElement.getBingoR13t()).add(estadisticaElement.getBingoR14t()))));
 	}
@@ -3734,7 +3734,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoR2Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoR2Totalt(((estadisticaElement.getBingoR21t().add(estadisticaElement.getBingoR22t()).add(estadisticaElement.getBingoR23t()).add(estadisticaElement.getBingoR24t()))));
 	}
@@ -3758,7 +3758,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoR3Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoR3Totalt(((estadisticaElement.getBingoR31t().add(estadisticaElement.getBingoR32t()).add(estadisticaElement.getBingoR33t()).add(estadisticaElement.getBingoR34t()))));
 	}
@@ -3782,7 +3782,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoR4Totalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoR4Totalt(((estadisticaElement.getBingoR41t().add(estadisticaElement.getBingoR42t()).add(estadisticaElement.getBingoR43t()).add(estadisticaElement.getBingoR44t()))));
 	}
@@ -3806,7 +3806,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoRtotal1t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoRtotal1t(((estadisticaElement.getBingoR11t().add(estadisticaElement.getBingoR21t()).add(estadisticaElement.getBingoR31t()).add(estadisticaElement.getBingoR41t()))));
 	}
@@ -3830,7 +3830,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoRtotal2t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoRtotal2t(((estadisticaElement.getBingoR12t().add(estadisticaElement.getBingoR22t()).add(estadisticaElement.getBingoR32t()).add(estadisticaElement.getBingoR42t()))));
 	}
@@ -3854,7 +3854,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoRtotal3t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoRtotal3t(((estadisticaElement.getBingoR13t().add(estadisticaElement.getBingoR23t()).add(estadisticaElement.getBingoR33t()).add(estadisticaElement.getBingoR43t()))));
 	}
@@ -3878,7 +3878,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoRtotal4t_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoRtotal4t(((estadisticaElement.getBingoR14t().add(estadisticaElement.getBingoR24t()).add(estadisticaElement.getBingoR34t()).add(estadisticaElement.getBingoR44t()))));
 	}
@@ -3902,7 +3902,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void bingoRtotalTotalt_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setBingoRtotalTotalt(((estadisticaElement.getBingoRtotal1t().add(estadisticaElement.getBingoRtotal2t()).add(estadisticaElement.getBingoRtotal3t()).add(estadisticaElement.getBingoRtotal4t()))));
 	}
@@ -3924,9 +3924,9 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void rbBingoPeriodo_radioGroupChange() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
-		this.getTask().getServices().visualizacionBingo(estadisticaElement);
+		getTask().getServices().visualizacionBingo(estadisticaElement);
 	}
 
 	/* Original PL/SQL code code for TRIGGER LIQ_BIN_TOTAL_DOCT_TOTAL.FORMULA-CALCULATION
@@ -3948,7 +3948,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinTotalDoctTotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinTotalDoctTotal(((estadisticaElement.getLiqBinG1DoctTotal().add(estadisticaElement.getLiqBinG2DoctTotal()).add(estadisticaElement.getLiqBinG3DoctTotal()).add(estadisticaElement.getLiqBinG4DoctTotal()).add(estadisticaElement.getLiqBinG5DoctTotal()).add(estadisticaElement.getLiqBinRestoDoctTotal()))));
 	}
@@ -3972,7 +3972,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinTotalTTotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinTotalTTotal((((estadisticaElement.getLiqBinG2TTotal()).add(estadisticaElement.getLiqBinG3TTotal()).add(estadisticaElement.getLiqBinG4TTotal()).add(estadisticaElement.getLiqBinG5TTotal()).add(estadisticaElement.getLiqBinRestoTTotal()))));
 	}
@@ -3996,7 +3996,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinG1Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinG1Docrtotal(((estadisticaElement.getLiqBinG1Docr1().add(estadisticaElement.getLiqBinG1Docr2()).add(estadisticaElement.getLiqBinG1Docr3()).add(estadisticaElement.getLiqBinG1Docr4()))));
 	}
@@ -4020,7 +4020,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinG2Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinG2Docrtotal(((estadisticaElement.getLiqBinG2Docr1().add(estadisticaElement.getLiqBinG2Docr2()).add(estadisticaElement.getLiqBinG2Docr3()).add(estadisticaElement.getLiqBinG2Docr4()))));
 	}
@@ -4044,7 +4044,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinG3Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinG3Docrtotal(((estadisticaElement.getLiqBinG3Docr1().add(estadisticaElement.getLiqBinG3Docr2()).add(estadisticaElement.getLiqBinG3Docr3()).add(estadisticaElement.getLiqBinG3Docr4()))));
 	}
@@ -4068,7 +4068,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinG4Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinG4Docrtotal(((estadisticaElement.getLiqBinG4Docr1().add(estadisticaElement.getLiqBinG4Docr2()).add(estadisticaElement.getLiqBinG4Docr3()).add(estadisticaElement.getLiqBinG4Docr4()))));
 	}
@@ -4092,7 +4092,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinG5Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinG5Docrtotal(((estadisticaElement.getLiqBinG5Docr1().add(estadisticaElement.getLiqBinG5Docr2()).add(estadisticaElement.getLiqBinG5Docr3()).add(estadisticaElement.getLiqBinG5Docr4()))));
 	}
@@ -4116,7 +4116,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinG6Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinG6Docrtotal(((estadisticaElement.getLiqBinG6Docr1().add(estadisticaElement.getLiqBinG6Docr2()).add(estadisticaElement.getLiqBinG6Docr3()).add(estadisticaElement.getLiqBinG6Docr4()))));
 	}
@@ -4140,7 +4140,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinRestoDocrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinRestoDocrtotal(((estadisticaElement.getLiqBinRestoDocr1().add(estadisticaElement.getLiqBinRestoDocr2()).add(estadisticaElement.getLiqBinRestoDocr3()).add(estadisticaElement.getLiqBinRestoDocr4()))));
 	}
@@ -4164,7 +4164,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinTotalDocr1_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinTotalDocr1(((estadisticaElement.getLiqBinG1Docr1().add(estadisticaElement.getLiqBinG2Docr1()).add(estadisticaElement.getLiqBinG3Docr1()).add(estadisticaElement.getLiqBinG4Docr1()).add(estadisticaElement.getLiqBinG5Docr1()).add(estadisticaElement.getLiqBinRestoDocr1()))));
 	}
@@ -4188,7 +4188,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinTotalDocr2_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinTotalDocr2(((estadisticaElement.getLiqBinG1Docr2().add(estadisticaElement.getLiqBinG2Docr2()).add(estadisticaElement.getLiqBinG3Docr2()).add(estadisticaElement.getLiqBinG4Docr2()).add(estadisticaElement.getLiqBinG5Docr2()).add(estadisticaElement.getLiqBinRestoDocr2()))));
 	}
@@ -4212,7 +4212,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinTotalDocr3_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinTotalDocr3(((estadisticaElement.getLiqBinG1Docr3().add(estadisticaElement.getLiqBinG2Docr3()).add(estadisticaElement.getLiqBinG3Docr3()).add(estadisticaElement.getLiqBinG4Docr3()).add(estadisticaElement.getLiqBinG5Docr3()).add(estadisticaElement.getLiqBinRestoDocr3()))));
 	}
@@ -4236,7 +4236,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinTotalDocr4_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinTotalDocr4(((estadisticaElement.getLiqBinG1Docr4().add(estadisticaElement.getLiqBinG2Docr4()).add(estadisticaElement.getLiqBinG3Docr4()).add(estadisticaElement.getLiqBinG4Docr4()).add(estadisticaElement.getLiqBinG5Docr4()).add(estadisticaElement.getLiqBinRestoDocr4()))));
 	}
@@ -4260,7 +4260,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinTotalDocrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinTotalDocrtotal(((estadisticaElement.getLiqBinTotalDocr1().add(estadisticaElement.getLiqBinTotalDocr2()).add(estadisticaElement.getLiqBinTotalDocr3()).add(estadisticaElement.getLiqBinTotalDocr4()))));
 	}
@@ -4284,7 +4284,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinG1Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinG1Rtotal(((estadisticaElement.getLiqBinG1R1().add(estadisticaElement.getLiqBinG1R2()).add(estadisticaElement.getLiqBinG1R3()).add(estadisticaElement.getLiqBinG1R4()))));
 	}
@@ -4308,7 +4308,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinG2Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinG2Rtotal(((estadisticaElement.getLiqBinG2R1().add(estadisticaElement.getLiqBinG2R2()).add(estadisticaElement.getLiqBinG2R3()).add(estadisticaElement.getLiqBinG2R4()))));
 	}
@@ -4332,7 +4332,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinG3Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinG3Rtotal(((estadisticaElement.getLiqBinG3R1().add(estadisticaElement.getLiqBinG3R2()).add(estadisticaElement.getLiqBinG3R3()).add(estadisticaElement.getLiqBinG3R4()))));
 	}
@@ -4356,7 +4356,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinG4Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinG4Rtotal(((estadisticaElement.getLiqBinG4R1().add(estadisticaElement.getLiqBinG4R2()).add(estadisticaElement.getLiqBinG4R3()).add(estadisticaElement.getLiqBinG4R4()))));
 	}
@@ -4380,7 +4380,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinG5Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinG5Rtotal(((estadisticaElement.getLiqBinG5R1().add(estadisticaElement.getLiqBinG5R2()).add(estadisticaElement.getLiqBinG5R3()).add(estadisticaElement.getLiqBinG5R4()))));
 	}
@@ -4404,7 +4404,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinG6Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinG6Rtotal(((estadisticaElement.getLiqBinG6R1().add(estadisticaElement.getLiqBinG6R2()).add(estadisticaElement.getLiqBinG6R3()).add(estadisticaElement.getLiqBinG6R4()))));
 	}
@@ -4428,7 +4428,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinRestoRtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinRestoRtotal(((estadisticaElement.getLiqBinRestoR1().add(estadisticaElement.getLiqBinRestoR2()).add(estadisticaElement.getLiqBinRestoR3()).add(estadisticaElement.getLiqBinRestoR4()))));
 	}
@@ -4452,7 +4452,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinTotalR1_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinTotalR1(((estadisticaElement.getLiqBinG1R1().add(estadisticaElement.getLiqBinG2R1()).add(estadisticaElement.getLiqBinG3R1()).add(estadisticaElement.getLiqBinG4R1()).add(estadisticaElement.getLiqBinG5R1()).add(estadisticaElement.getLiqBinRestoR1()))));
 	}
@@ -4476,7 +4476,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinTotalR2_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinTotalR2(((estadisticaElement.getLiqBinG1R2().add(estadisticaElement.getLiqBinG2R2()).add(estadisticaElement.getLiqBinG3R2()).add(estadisticaElement.getLiqBinG4R2()).add(estadisticaElement.getLiqBinG5R2()).add(estadisticaElement.getLiqBinRestoR2()))));
 	}
@@ -4500,7 +4500,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinTotalR3_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinTotalR3(((estadisticaElement.getLiqBinG1R3().add(estadisticaElement.getLiqBinG2R3()).add(estadisticaElement.getLiqBinG3R3()).add(estadisticaElement.getLiqBinG4R3()).add(estadisticaElement.getLiqBinG5R3()).add(estadisticaElement.getLiqBinRestoR3()))));
 	}
@@ -4524,7 +4524,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinTotalR4_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinTotalR4(((estadisticaElement.getLiqBinG1R4().add(estadisticaElement.getLiqBinG2R4()).add(estadisticaElement.getLiqBinG3R4()).add(estadisticaElement.getLiqBinG4R4()).add(estadisticaElement.getLiqBinG5R4()).add(estadisticaElement.getLiqBinRestoR4()))));
 	}
@@ -4548,7 +4548,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqBinTotalRtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqBinTotalRtotal(((estadisticaElement.getLiqBinTotalR1().add(estadisticaElement.getLiqBinTotalR2()).add(estadisticaElement.getLiqBinTotalR3()).add(estadisticaElement.getLiqBinTotalR4()))));
 	}
@@ -4570,9 +4570,9 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void rbLiqBinPeriodo_radioGroupChange() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
-		this.getTask().getServices().visualizacionLiqBingo(estadisticaElement);
+		getTask().getServices().visualizacionLiqBingo(estadisticaElement);
 	}
 
 	/* Original PL/SQL code code for TRIGGER CASINO_DOCTTOTAL.FORMULA-CALCULATION
@@ -4594,7 +4594,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void casinoDocttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setCasinoDocttotal(((estadisticaElement.getCasinoDoct1().add(estadisticaElement.getCasinoDoct2()).add(estadisticaElement.getCasinoDoct3()).add(estadisticaElement.getCasinoDoct4()))));
 	}
@@ -4618,7 +4618,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void casinoTtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setCasinoTtotal(((estadisticaElement.getCasinoT1().add(estadisticaElement.getCasinoT2()).add(estadisticaElement.getCasinoT3()).add(estadisticaElement.getCasinoT4()))));
 	}
@@ -4642,7 +4642,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void casinoDocrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setCasinoDocrtotal(((estadisticaElement.getCasinoDocr1().add(estadisticaElement.getCasinoDocr2()).add(estadisticaElement.getCasinoDocr3()).add(estadisticaElement.getCasinoDocr4()))));
 	}
@@ -4666,7 +4666,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void casinoRtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setCasinoRtotal(((estadisticaElement.getCasinoR1().add(estadisticaElement.getCasinoR2()).add(estadisticaElement.getCasinoR3()).add(estadisticaElement.getCasinoR4()))));
 	}
@@ -4690,7 +4690,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG1Docttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG1Docttotal(((estadisticaElement.getLiqCasG1Doct1().add(estadisticaElement.getLiqCasG1Doct2()).add(estadisticaElement.getLiqCasG1Doct3()).add(estadisticaElement.getLiqCasG1Doct4()))));
 	}
@@ -4714,7 +4714,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG2Docttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG2Docttotal(((estadisticaElement.getLiqCasG2Doct1().add(estadisticaElement.getLiqCasG2Doct2()).add(estadisticaElement.getLiqCasG2Doct3()).add(estadisticaElement.getLiqCasG2Doct4()))));
 	}
@@ -4738,7 +4738,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG3Docttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG3Docttotal(((estadisticaElement.getLiqCasG3Doct1().add(estadisticaElement.getLiqCasG3Doct2()).add(estadisticaElement.getLiqCasG3Doct3()).add(estadisticaElement.getLiqCasG3Doct4()))));
 	}
@@ -4762,7 +4762,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG4Docttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG4Docttotal(((estadisticaElement.getLiqCasG4Doct1().add(estadisticaElement.getLiqCasG4Doct2()).add(estadisticaElement.getLiqCasG4Doct3()).add(estadisticaElement.getLiqCasG4Doct4()))));
 	}
@@ -4786,7 +4786,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG5Docttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG5Docttotal(((estadisticaElement.getLiqCasG5Doct1().add(estadisticaElement.getLiqCasG5Doct2()).add(estadisticaElement.getLiqCasG5Doct3()).add(estadisticaElement.getLiqCasG5Doct4()))));
 	}
@@ -4810,7 +4810,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG6Docttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG6Docttotal(((estadisticaElement.getLiqCasG6Doct1().add(estadisticaElement.getLiqCasG6Doct2()).add(estadisticaElement.getLiqCasG6Doct3()).add(estadisticaElement.getLiqCasG6Doct4()))));
 	}
@@ -4834,7 +4834,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasRestoDocttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasRestoDocttotal(((estadisticaElement.getLiqCasRestoDoct1().add(estadisticaElement.getLiqCasRestoDoct2()).add(estadisticaElement.getLiqCasRestoDoct3()).add(estadisticaElement.getLiqCasRestoDoct4()))));
 	}
@@ -4858,7 +4858,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalDoct1_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalDoct1(((estadisticaElement.getLiqCasG1Doct1().add(estadisticaElement.getLiqCasG2Doct1()).add(estadisticaElement.getLiqCasG3Doct1()).add(estadisticaElement.getLiqCasG4Doct1()).add(estadisticaElement.getLiqCasG5Doct1()).add(estadisticaElement.getLiqCasRestoDoct1()))));
 	}
@@ -4882,7 +4882,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalDoct2_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalDoct2(((estadisticaElement.getLiqCasG1Doct2().add(estadisticaElement.getLiqCasG2Doct2()).add(estadisticaElement.getLiqCasG3Doct2()).add(estadisticaElement.getLiqCasG4Doct2()).add(estadisticaElement.getLiqCasG5Doct2()).add(estadisticaElement.getLiqCasRestoDoct2()))));
 	}
@@ -4906,7 +4906,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalDoct3_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalDoct3(((estadisticaElement.getLiqCasG1Doct3().add(estadisticaElement.getLiqCasG2Doct3()).add(estadisticaElement.getLiqCasG3Doct3()).add(estadisticaElement.getLiqCasG4Doct3()).add(estadisticaElement.getLiqCasG5Doct3()).add(estadisticaElement.getLiqCasRestoDoct3()))));
 	}
@@ -4930,7 +4930,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalDoct4_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalDoct4(((estadisticaElement.getLiqCasG1Doct4().add(estadisticaElement.getLiqCasG2Doct4()).add(estadisticaElement.getLiqCasG3Doct4()).add(estadisticaElement.getLiqCasG4Doct4()).add(estadisticaElement.getLiqCasG5Doct4()).add(estadisticaElement.getLiqCasRestoDoct4()))));
 	}
@@ -4954,7 +4954,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalDocttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalDocttotal(((estadisticaElement.getLiqCasTotalDoct1().add(estadisticaElement.getLiqCasTotalDoct2()).add(estadisticaElement.getLiqCasTotalDoct3()).add(estadisticaElement.getLiqCasTotalDoct4()))));
 	}
@@ -4978,7 +4978,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG1Ttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG1Ttotal(((estadisticaElement.getLiqCasG1T1().add(estadisticaElement.getLiqCasG1T2()).add(estadisticaElement.getLiqCasG1T3()).add(estadisticaElement.getLiqCasG1T4()))));
 	}
@@ -5002,7 +5002,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG2Ttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG2Ttotal(((estadisticaElement.getLiqCasG2T1().add(estadisticaElement.getLiqCasG2T2()).add(estadisticaElement.getLiqCasG2T3()).add(estadisticaElement.getLiqCasG2T4()))));
 	}
@@ -5026,7 +5026,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG3Ttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG3Ttotal(((estadisticaElement.getLiqCasG3T1().add(estadisticaElement.getLiqCasG3T2()).add(estadisticaElement.getLiqCasG3T3()).add(estadisticaElement.getLiqCasG3T4()))));
 	}
@@ -5050,7 +5050,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG4Ttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG4Ttotal(((estadisticaElement.getLiqCasG4T1().add(estadisticaElement.getLiqCasG4T2()).add(estadisticaElement.getLiqCasG4T3()).add(estadisticaElement.getLiqCasG4T4()))));
 	}
@@ -5074,7 +5074,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG5Ttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG5Ttotal(((estadisticaElement.getLiqCasG5T1().add(estadisticaElement.getLiqCasG5T2()).add(estadisticaElement.getLiqCasG5T3()).add(estadisticaElement.getLiqCasG5T4()))));
 	}
@@ -5098,7 +5098,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG6Ttotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG6Ttotal(((estadisticaElement.getLiqCasG6T1().add(estadisticaElement.getLiqCasG6T2()).add(estadisticaElement.getLiqCasG6T3()).add(estadisticaElement.getLiqCasG6T4()))));
 	}
@@ -5122,7 +5122,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasRestoTtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasRestoTtotal(((estadisticaElement.getLiqCasRestoT1().add(estadisticaElement.getLiqCasRestoT2()).add(estadisticaElement.getLiqCasRestoT3()).add(estadisticaElement.getLiqCasRestoT4()))));
 	}
@@ -5146,7 +5146,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalT1_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalT1(((estadisticaElement.getLiqCasG1T1().add(estadisticaElement.getLiqCasG2T1()).add(estadisticaElement.getLiqCasG3T1()).add(estadisticaElement.getLiqCasG4T1()).add(estadisticaElement.getLiqCasG5T1()).add(estadisticaElement.getLiqCasRestoT1()))));
 	}
@@ -5170,7 +5170,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalT2_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalT2(((estadisticaElement.getLiqCasG1T2().add(estadisticaElement.getLiqCasG2T2()).add(estadisticaElement.getLiqCasG3T2()).add(estadisticaElement.getLiqCasG4T2()).add(estadisticaElement.getLiqCasG5T2()).add(estadisticaElement.getLiqCasRestoT2()))));
 	}
@@ -5194,7 +5194,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalT3_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalT3(((estadisticaElement.getLiqCasG1T3().add(estadisticaElement.getLiqCasG2T3()).add(estadisticaElement.getLiqCasG3T3()).add(estadisticaElement.getLiqCasG4T3()).add(estadisticaElement.getLiqCasG5T3()).add(estadisticaElement.getLiqCasRestoT3()))));
 	}
@@ -5218,7 +5218,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalT4_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalT4(((estadisticaElement.getLiqCasG1T4().add(estadisticaElement.getLiqCasG2T4()).add(estadisticaElement.getLiqCasG3T4()).add(estadisticaElement.getLiqCasG4T4()).add(estadisticaElement.getLiqCasG5T4()).add(estadisticaElement.getLiqCasRestoT4()))));
 	}
@@ -5242,7 +5242,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalTtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalTtotal(((estadisticaElement.getLiqCasTotalT1().add(estadisticaElement.getLiqCasTotalT2()).add(estadisticaElement.getLiqCasTotalT3()).add(estadisticaElement.getLiqCasTotalT4()))));
 	}
@@ -5266,7 +5266,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG1Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG1Docrtotal(((estadisticaElement.getLiqCasG1Docr1().add(estadisticaElement.getLiqCasG1Docr2()).add(estadisticaElement.getLiqCasG1Docr3()).add(estadisticaElement.getLiqCasG1Docr4()))));
 	}
@@ -5290,7 +5290,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG2Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG2Docrtotal(((estadisticaElement.getLiqCasG2Docr1().add(estadisticaElement.getLiqCasG2Docr2()).add(estadisticaElement.getLiqCasG2Docr3()).add(estadisticaElement.getLiqCasG2Docr4()))));
 	}
@@ -5314,7 +5314,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG3Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG3Docrtotal(((estadisticaElement.getLiqCasG3Docr1().add(estadisticaElement.getLiqCasG3Docr2()).add(estadisticaElement.getLiqCasG3Docr3()).add(estadisticaElement.getLiqCasG3Docr4()))));
 	}
@@ -5338,7 +5338,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG4Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG4Docrtotal(((estadisticaElement.getLiqCasG4Docr1().add(estadisticaElement.getLiqCasG4Docr2()).add(estadisticaElement.getLiqCasG4Docr3()).add(estadisticaElement.getLiqCasG4Docr4()))));
 	}
@@ -5362,7 +5362,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG5Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG5Docrtotal(((estadisticaElement.getLiqCasG5Docr1().add(estadisticaElement.getLiqCasG5Docr2()).add(estadisticaElement.getLiqCasG5Docr3()).add(estadisticaElement.getLiqCasG5Docr4()))));
 	}
@@ -5386,7 +5386,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG6Docrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG6Docrtotal(((estadisticaElement.getLiqCasG6Docr1().add(estadisticaElement.getLiqCasG6Docr2()).add(estadisticaElement.getLiqCasG6Docr3()).add(estadisticaElement.getLiqCasG6Docr4()))));
 	}
@@ -5410,7 +5410,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasRestoDocrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasRestoDocrtotal(((estadisticaElement.getLiqCasRestoDocr1().add(estadisticaElement.getLiqCasRestoDocr2()).add(estadisticaElement.getLiqCasRestoDocr3()).add(estadisticaElement.getLiqCasRestoDocr4()))));
 	}
@@ -5434,7 +5434,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalDocr1_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalDocr1(((estadisticaElement.getLiqCasG1Docr1().add(estadisticaElement.getLiqCasG2Docr1()).add(estadisticaElement.getLiqCasG3Docr1()).add(estadisticaElement.getLiqCasG4Docr1()).add(estadisticaElement.getLiqCasG5Docr1()).add(estadisticaElement.getLiqCasRestoDocr1()))));
 	}
@@ -5458,7 +5458,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalDocr2_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalDocr2(((estadisticaElement.getLiqCasG1Docr2().add(estadisticaElement.getLiqCasG2Docr2()).add(estadisticaElement.getLiqCasG3Docr2()).add(estadisticaElement.getLiqCasG4Docr2()).add(estadisticaElement.getLiqCasG5Docr2()).add(estadisticaElement.getLiqCasRestoDocr2()))));
 	}
@@ -5482,7 +5482,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalDocr3_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalDocr3(((estadisticaElement.getLiqCasG1Docr3().add(estadisticaElement.getLiqCasG2Docr3()).add(estadisticaElement.getLiqCasG3Docr3()).add(estadisticaElement.getLiqCasG4Docr3()).add(estadisticaElement.getLiqCasG5Docr3()).add(estadisticaElement.getLiqCasRestoDocr3()))));
 	}
@@ -5506,7 +5506,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalDocr4_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalDocr4(((estadisticaElement.getLiqCasG1Docr4().add(estadisticaElement.getLiqCasG2Docr4()).add(estadisticaElement.getLiqCasG3Docr4()).add(estadisticaElement.getLiqCasG4Docr4()).add(estadisticaElement.getLiqCasG5Docr4()).add(estadisticaElement.getLiqCasRestoDocr4()))));
 	}
@@ -5530,7 +5530,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalDocrtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalDocrtotal(((estadisticaElement.getLiqCasTotalDocr1().add(estadisticaElement.getLiqCasTotalDocr2()).add(estadisticaElement.getLiqCasTotalDocr3()).add(estadisticaElement.getLiqCasTotalDocr4()))));
 	}
@@ -5554,7 +5554,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG1Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG1Rtotal(((estadisticaElement.getLiqCasG1R1().add(estadisticaElement.getLiqCasG1R2()).add(estadisticaElement.getLiqCasG1R3()).add(estadisticaElement.getLiqCasG1R4()))));
 	}
@@ -5578,7 +5578,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG2Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG2Rtotal(((estadisticaElement.getLiqCasG2R1().add(estadisticaElement.getLiqCasG2R2()).add(estadisticaElement.getLiqCasG2R3()).add(estadisticaElement.getLiqCasG2R4()))));
 	}
@@ -5602,7 +5602,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG3Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG3Rtotal(((estadisticaElement.getLiqCasG3R1().add(estadisticaElement.getLiqCasG3R2()).add(estadisticaElement.getLiqCasG3R3()).add(estadisticaElement.getLiqCasG3R4()))));
 	}
@@ -5626,7 +5626,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG4Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG4Rtotal(((estadisticaElement.getLiqCasG4R1().add(estadisticaElement.getLiqCasG4R2()).add(estadisticaElement.getLiqCasG4R3()).add(estadisticaElement.getLiqCasG4R4()))));
 	}
@@ -5650,7 +5650,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG5Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG5Rtotal(((estadisticaElement.getLiqCasG5R1().add(estadisticaElement.getLiqCasG5R2()).add(estadisticaElement.getLiqCasG5R3()).add(estadisticaElement.getLiqCasG5R4()))));
 	}
@@ -5674,7 +5674,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasG6Rtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasG6Rtotal(((estadisticaElement.getLiqCasG6R1().add(estadisticaElement.getLiqCasG6R2()).add(estadisticaElement.getLiqCasG6R3()).add(estadisticaElement.getLiqCasG6R4()))));
 	}
@@ -5698,7 +5698,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasRestoRtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasRestoRtotal(((estadisticaElement.getLiqCasRestoR1().add(estadisticaElement.getLiqCasRestoR2()).add(estadisticaElement.getLiqCasRestoR3()).add(estadisticaElement.getLiqCasRestoR4()))));
 	}
@@ -5722,7 +5722,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalR1_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalR1(((estadisticaElement.getLiqCasG1R1().add(estadisticaElement.getLiqCasG2R1()).add(estadisticaElement.getLiqCasG3R1()).add(estadisticaElement.getLiqCasG4R1()).add(estadisticaElement.getLiqCasG5R1()).add(estadisticaElement.getLiqCasRestoR1()))));
 	}
@@ -5746,7 +5746,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalR2_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalR2(((estadisticaElement.getLiqCasG1R2().add(estadisticaElement.getLiqCasG2R2()).add(estadisticaElement.getLiqCasG3R2()).add(estadisticaElement.getLiqCasG4R2()).add(estadisticaElement.getLiqCasG5R2()).add(estadisticaElement.getLiqCasRestoR2()))));
 	}
@@ -5770,7 +5770,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalR3_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalR3(((estadisticaElement.getLiqCasG1R3().add(estadisticaElement.getLiqCasG2R3()).add(estadisticaElement.getLiqCasG3R3()).add(estadisticaElement.getLiqCasG4R3()).add(estadisticaElement.getLiqCasG5R3()).add(estadisticaElement.getLiqCasRestoR3()))));
 	}
@@ -5794,7 +5794,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalR4_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalR4(((estadisticaElement.getLiqCasG1R4().add(estadisticaElement.getLiqCasG2R4()).add(estadisticaElement.getLiqCasG3R4()).add(estadisticaElement.getLiqCasG4R4()).add(estadisticaElement.getLiqCasG5R4()).add(estadisticaElement.getLiqCasRestoR4()))));
 	}
@@ -5818,7 +5818,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqCasTotalRtotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqCasTotalRtotal(((estadisticaElement.getLiqCasTotalR1().add(estadisticaElement.getLiqCasTotalR2()).add(estadisticaElement.getLiqCasTotalR3()).add(estadisticaElement.getLiqCasTotalR4()))));
 	}
@@ -5840,9 +5840,9 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void rbLiqCasPeriodo_radioGroupChange() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
-		this.getTask().getServices().visualizacionLiqCasino(estadisticaElement);
+		getTask().getServices().visualizacionLiqCasino(estadisticaElement);
 	}
 
 	/* Original PL/SQL code code for TRIGGER LIQ_OTRO_DOC_G1_TOTAL.FORMULA-CALCULATION
@@ -5864,7 +5864,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroDocG1Total_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroDocG1Total(((estadisticaElement.getLiqOtroDocG1Comb().add(estadisticaElement.getLiqOtroDocG1Apue()).add(estadisticaElement.getLiqOtroDocG1Rifa()).add(estadisticaElement.getLiqOtroDocG1Bole()))));
 	}
@@ -5888,7 +5888,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroDocG2Total_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroDocG2Total(((estadisticaElement.getLiqOtroDocG2Comb().add(estadisticaElement.getLiqOtroDocG2Apue()).add(estadisticaElement.getLiqOtroDocG2Rifa()).add(estadisticaElement.getLiqOtroDocG2Bole()))));
 	}
@@ -5912,7 +5912,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroDocG3Total_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroDocG3Total(((estadisticaElement.getLiqOtroDocG3Comb().add(estadisticaElement.getLiqOtroDocG3Apue()).add(estadisticaElement.getLiqOtroDocG3Rifa()).add(estadisticaElement.getLiqOtroDocG3Bole()))));
 	}
@@ -5936,7 +5936,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroDocG4Total_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroDocG4Total(((estadisticaElement.getLiqOtroDocG4Comb().add(estadisticaElement.getLiqOtroDocG4Apue()).add(estadisticaElement.getLiqOtroDocG4Rifa()).add(estadisticaElement.getLiqOtroDocG4Bole()))));
 	}
@@ -5960,7 +5960,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroDocG5Total_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroDocG5Total(((estadisticaElement.getLiqOtroDocG5Comb().add(estadisticaElement.getLiqOtroDocG5Apue()).add(estadisticaElement.getLiqOtroDocG5Rifa()).add(estadisticaElement.getLiqOtroDocG5Bole()))));
 	}
@@ -5984,7 +5984,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroDocG6Total_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroDocG6Total(((estadisticaElement.getLiqOtroDocG6Comb().add(estadisticaElement.getLiqOtroDocG6Apue()).add(estadisticaElement.getLiqOtroDocG6Rifa()).add(estadisticaElement.getLiqOtroDocG6Bole()))));
 	}
@@ -6008,7 +6008,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroDocRestoTotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroDocRestoTotal(((estadisticaElement.getLiqOtroDocRestoComb().add(estadisticaElement.getLiqOtroDocRestoApue()).add(estadisticaElement.getLiqOtroDocRestoRifa()).add(estadisticaElement.getLiqOtroDocRestoBole()))));
 	}
@@ -6032,7 +6032,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroDocTotalComb_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroDocTotalComb(((estadisticaElement.getLiqOtroDocG1Comb().add(estadisticaElement.getLiqOtroDocG2Comb()).add(estadisticaElement.getLiqOtroDocG3Comb()).add(estadisticaElement.getLiqOtroDocG4Comb()).add(estadisticaElement.getLiqOtroDocG5Comb()).add(estadisticaElement.getLiqOtroDocRestoComb()))));
 	}
@@ -6056,7 +6056,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroDocTotalApue_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroDocTotalApue(((estadisticaElement.getLiqOtroDocG1Apue().add(estadisticaElement.getLiqOtroDocG2Apue()).add(estadisticaElement.getLiqOtroDocG3Apue()).add(estadisticaElement.getLiqOtroDocG4Apue()).add(estadisticaElement.getLiqOtroDocG5Apue()).add(estadisticaElement.getLiqOtroDocRestoApue()))));
 	}
@@ -6080,7 +6080,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroDocTotalRifa_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroDocTotalRifa(((estadisticaElement.getLiqOtroDocG1Rifa().add(estadisticaElement.getLiqOtroDocG2Rifa()).add(estadisticaElement.getLiqOtroDocG3Rifa()).add(estadisticaElement.getLiqOtroDocG4Rifa()).add(estadisticaElement.getLiqOtroDocG5Rifa()).add(estadisticaElement.getLiqOtroDocRestoRifa()))));
 	}
@@ -6104,7 +6104,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroDocTotalBole_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroDocTotalBole(((estadisticaElement.getLiqOtroDocG1Bole().add(estadisticaElement.getLiqOtroDocG2Bole()).add(estadisticaElement.getLiqOtroDocG3Bole()).add(estadisticaElement.getLiqOtroDocG4Bole()).add(estadisticaElement.getLiqOtroDocG5Bole()).add(estadisticaElement.getLiqOtroDocRestoBole()))));
 	}
@@ -6128,7 +6128,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroDocTotalTotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroDocTotalTotal(((estadisticaElement.getLiqOtroDocTotalComb().add(estadisticaElement.getLiqOtroDocTotalApue()).add(estadisticaElement.getLiqOtroDocTotalRifa()).add(estadisticaElement.getLiqOtroDocTotalBole()))));
 	}
@@ -6152,7 +6152,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroTG1Total_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroTG1Total(((estadisticaElement.getLiqOtroTG1Comb().add(estadisticaElement.getLiqOtroTG1Apue()).add(estadisticaElement.getLiqOtroTG1Rifa()).add(estadisticaElement.getLiqOtroTG1Bole()))));
 	}
@@ -6176,7 +6176,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroTG2Total_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroTG2Total(((estadisticaElement.getLiqOtroTG2Comb().add(estadisticaElement.getLiqOtroTG2Apue()).add(estadisticaElement.getLiqOtroTG2Rifa()).add(estadisticaElement.getLiqOtroTG2Bole()))));
 	}
@@ -6200,7 +6200,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroTG3Total_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroTG3Total(((estadisticaElement.getLiqOtroTG3Comb().add(estadisticaElement.getLiqOtroTG3Apue()).add(estadisticaElement.getLiqOtroTG3Rifa()).add(estadisticaElement.getLiqOtroTG3Bole()))));
 	}
@@ -6224,7 +6224,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroTG4Total_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroTG4Total(((estadisticaElement.getLiqOtroTG4Comb().add(estadisticaElement.getLiqOtroTG4Apue()).add(estadisticaElement.getLiqOtroTG4Rifa()).add(estadisticaElement.getLiqOtroTG4Bole()))));
 	}
@@ -6248,7 +6248,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroTG5Total_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroTG5Total(((estadisticaElement.getLiqOtroTG5Comb().add(estadisticaElement.getLiqOtroTG5Apue()).add(estadisticaElement.getLiqOtroTG5Rifa()).add(estadisticaElement.getLiqOtroTG5Bole()))));
 	}
@@ -6272,7 +6272,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroTG6Total_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroTG6Total(((estadisticaElement.getLiqOtroTG6Comb().add(estadisticaElement.getLiqOtroTG6Apue()).add(estadisticaElement.getLiqOtroTG6Rifa()).add(estadisticaElement.getLiqOtroTG6Bole()))));
 	}
@@ -6296,7 +6296,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroTRestoTotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroTRestoTotal(((estadisticaElement.getLiqOtroTRestoComb().add(estadisticaElement.getLiqOtroTRestoApue()).add(estadisticaElement.getLiqOtroTRestoRifa()).add(estadisticaElement.getLiqOtroTRestoBole()))));
 	}
@@ -6320,7 +6320,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroTTotalComb_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroTTotalComb(((estadisticaElement.getLiqOtroTG1Comb().add(estadisticaElement.getLiqOtroTG2Comb()).add(estadisticaElement.getLiqOtroTG3Comb()).add(estadisticaElement.getLiqOtroTG4Comb()).add(estadisticaElement.getLiqOtroTG5Comb()).add(estadisticaElement.getLiqOtroTRestoComb()))));
 	}
@@ -6344,7 +6344,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroTTotalApue_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroTTotalApue(((estadisticaElement.getLiqOtroTG1Apue().add(estadisticaElement.getLiqOtroTG2Apue()).add(estadisticaElement.getLiqOtroTG3Apue()).add(estadisticaElement.getLiqOtroTG4Apue()).add(estadisticaElement.getLiqOtroTG5Apue()).add(estadisticaElement.getLiqOtroTRestoApue()))));
 	}
@@ -6368,7 +6368,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroTTotalRifa_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroTTotalRifa(((estadisticaElement.getLiqOtroTG1Rifa().add(estadisticaElement.getLiqOtroTG2Rifa()).add(estadisticaElement.getLiqOtroTG3Rifa()).add(estadisticaElement.getLiqOtroTG4Rifa()).add(estadisticaElement.getLiqOtroTG5Rifa()).add(estadisticaElement.getLiqOtroTRestoRifa()))));
 	}
@@ -6392,7 +6392,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroTTotalBole_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroTTotalBole(((estadisticaElement.getLiqOtroTG1Bole().add(estadisticaElement.getLiqOtroTG2Bole()).add(estadisticaElement.getLiqOtroTG3Bole()).add(estadisticaElement.getLiqOtroTG4Bole()).add(estadisticaElement.getLiqOtroTG5Bole()).add(estadisticaElement.getLiqOtroTRestoBole()))));
 	}
@@ -6416,7 +6416,7 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void liqOtroTTotalTotal_FormulaCalculation() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
 		estadisticaElement.setLiqOtroTTotalTotal(((estadisticaElement.getLiqOtroTTotalComb().add(estadisticaElement.getLiqOtroTTotalApue()).add(estadisticaElement.getLiqOtroTTotalRifa()).add(estadisticaElement.getLiqOtroTTotalBole()))));
 	}
@@ -6438,9 +6438,9 @@ public class EstadisticaController extends DefaultSurBlockController {
 	public void rbLiqOtroConcepto_radioGroupChange() {
 
 		//F2J_WARNING : Caution, the variable may be null.
-		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) this.getFormModel().getEstadistica().getRowAdapter(true);
+		EstadisticaAdapter estadisticaElement = (EstadisticaAdapter) getFormModel().getEstadistica().getRowAdapter(true);
 
-		this.getTask().getServices().visualizacionLiqOtros(estadisticaElement);
+		getTask().getServices().visualizacionLiqOtros(estadisticaElement);
 	}
 
 }
